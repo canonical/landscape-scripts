@@ -79,7 +79,7 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 
 ## Systems Monitoring Scripts
 
-### Livepatch Graphs
+### Security Patching Graphs
 
 - **Tutorial**: find inaccessible security updates on any Ubuntu instance, by identifying the availability of software updates from the security pocket of the Expanded Security Maintenance repository. This tutorial does not yet exist. Feel free to contribute!
     - **securitystatus.sh** - pending
