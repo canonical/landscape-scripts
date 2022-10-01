@@ -29,9 +29,17 @@ Landscape Scripts can be authored in any familiar shell scripting language. Some
 
 ## Systems Management Scripts
 
-### name of first script
+### Manage UA Client FIPS configurations at scale with Landscape
 
-lorem ipsum
+[Tutorial](https://ubuntu.com/tutorials/manage-ua-client-fips-configurations-at-scale-with-landscape) | Bash Script | Python Script
+
+Use Landscape’s dashboard to identify manage machines with the Ubuntu Advantage FIPS entitlement enabled
+
+### Blocking Software Package Installation with Landscape
+
+[Tutorial](https://ubuntu.com/tutorials/blocking-software-package-installation-with-landscape) | Bash Script | Python Script
+
+Granular software restrictions are a trivial activity with Landscape.
 
 <img src="https://assets.ubuntu.com/v1/d3aa493c-Build-your-first-snap.svg" height="48" align="left">
 
