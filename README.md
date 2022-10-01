@@ -31,7 +31,7 @@ If you have an idea for a new script, do not hesitate to submit a pull request t
 
 If you are able to convert a bash script to python, or any other shell scripting language, please 
 
-<img src="https://assets.ubuntu.com/v1/18b87a60-image-intro-dots-desktop.svg" width="100%">
+---
 
 <img src="https://assets.ubuntu.com/v1/c9dc2869-Use-snap-commands.svg" height="48" align="left">
 
