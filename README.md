@@ -1,7 +1,7 @@
 <img src="https://assets.ubuntu.com/v1/bc04c279-landscape-title-logo-white.svg" height="150">
 
 
-# About Landscape Scripts
+# Landscape Scripts
 
 Landscape can execute scripts on machines on demand, or at a regular interval for monitoring purposes.
 
@@ -21,30 +21,45 @@ To run scripts on demand: click **Scripts** in the top navigation bar. Select wh
 
 The **Activities** tab in the Landscape dashboard conveys which user is responsible for a particular script, the targeted list of computers, the time it last ran, the terminal output for each computer, and the script's exit code.
 
-# The purpose of this project
+## The purpose of this project
 
 Landscape Scripts can be authored in any familiar shell scripting language. Some scripts are easier to implement with bash, others are easier to implement with Python. The goal of this project is to continuously improve and grow a collection of useful scripts that perform systems management or systems monitoring functions.
 
-<img src="https://assets.ubuntu.com/v1/c9dc2869-Use-snap-commands.svg" height="48" align="left">
+## How to contribute
 
-## Systems Management Scripts
+If you have an idea for a new script, do not hesitate to submit a pull request to this repository, and to write a companion tutorial.
 
-### Manage UA Client FIPS configurations at scale with Landscape
+If you are able to convert a bash script to python, or any other shell scripting language, please 
 
-[Tutorial](https://ubuntu.com/tutorials/manage-ua-client-fips-configurations-at-scale-with-landscape) | Bash Script | Python Script
+<img src="https://assets.ubuntu.com/v1/c9dc2869-Use-snap-commands.svg" height="36" align="left">
 
-Use Landscape’s dashboard to identify manage machines with the Ubuntu Advantage FIPS entitlement enabled
+### Systems Management Scripts
 
-### Blocking Software Package Installation with Landscape
+#### FIPS configurations at scale with Landscape
 
-[Tutorial](https://ubuntu.com/tutorials/blocking-software-package-installation-with-landscape) | Bash Script | Python Script
+- [Tutorial](https://ubuntu.com/tutorials/manage-ua-client-fips-configurations-at-scale-with-landscape): Enable and disable the Ubuntu Advantage FIPS entitlement in an auditable manner, through Landscape
+    - [`fipsenable.sh`](./management/FIPS/fipsenable.sh)
+    - `fispenable.py` - conversion needed
+    - [`fipsdisable.sh`](./management/FIPS/fipsdisable.sh)
+    - `fipsdisable.py` - conversion needed
+- [Tutorial](https://ubuntu.com/tutorials/audit-ua-client-fips-configurations-at-scale-with-landscape): Track the Ubuntu Advantage FIPS entitlement in an auditable manner, through Landscape
+    - [`fipsannotations.sh`](./management/FIPS/fipsannotations.sh)
 
-Granular software restrictions are a trivial activity with Landscape.
+#### Blocking Software Package Installation with Landscape
 
-<img src="https://assets.ubuntu.com/v1/d3aa493c-Build-your-first-snap.svg" height="48" align="left">
+- [Tutorial](https://ubuntu.com/tutorials/blocking-software-package-installation-with-landscape): Granular software restrictions by apt package name.
+    - [`bypackagename.sh`](./management/Block%20Installation%20with%20Apt/bypackagename.sh)
+    - `bypackagename.py` - conversion needed
+- Tutorial: There is a need to programmatically create `.pref` files to block all packages from Universe. This allows tightly regulated environments to lock down their Ubuntu environments, and loosen restrictions as needed. This tutorial and its companion scripts do not yet exist. Feel free to contribute!
+    - `allpackages.sh` - pending
+    - `allpackages.py` - pending
 
-## Systems Monitoring Scripts
+<img src="https://assets.ubuntu.com/v1/d3aa493c-Build-your-first-snap.svg" height="36" align="left">
 
-### name of first script
+### Systems Monitoring Scripts
 
-lorem ipsum
+#### Livepatch Graphs
+
+- [Tutorial](https://ubuntu.com/tutorials/add-livepatch-graphs-in-landscape): chart kernel live patching activities over time with Landscape’s custom graphs.
+    - [`livepatchcount.sh`](./monitoring/Livepatch/livepatchcount.sh)
+    - `livepatchcount.py` - conversion needed
