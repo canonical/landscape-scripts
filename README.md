@@ -43,7 +43,7 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 - [**Tutorial**](https://ubuntu.com/tutorials/blocking-software-package-installation-with-landscape): Granular software restrictions by apt package name.
     - [**bypackagename.sh**](./management/Block%20Installation%20with%20Apt/bypackagename.sh)
     - **bypackagename.py** - conversion needed
-- Tutorial: There is a need to programmatically create **.pref** files to block all packages from Universe. This allows tightly regulated environments to lock down their Ubuntu environments, and loosen restrictions as needed. This tutorial and its companion scripts do not yet exist. Feel free to contribute!
+- **Tutorial**: There is a need to programmatically create **.pref** files to block all packages from Universe. This allows tightly regulated environments to lock down their Ubuntu environments, and loosen restrictions as needed. This tutorial and its companion scripts do not yet exist. Feel free to contribute!
     - **allpackages.sh** - pending
     - **allpackages.py** - pending
 
