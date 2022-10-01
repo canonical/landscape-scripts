@@ -8,7 +8,7 @@ Landscape can execute scripts on machines on demand, or at a regular interval fo
 1. Remote execution Scripts
 2. Graphs for monitoring over time
 
-To add scripts into Landscape, when you log into dashboard, you will see **Scripts** and **Graphs** in the top navigation bar.
+To add scripts into Landscape, when you log into dashboard, you will see **Scripts** and **Graphs** in the top navigation bar. Navigating to each of those links will reveal a page with an "Add Scripts" or "Add Graph" link.
 
 All Scripts must produce a successful exit code. If a script produces an exit code indicative of failure, Landscape will report that the script failed to run.
 
@@ -31,11 +31,11 @@ If you have an idea for a new script, do not hesitate to submit a pull request t
 
 If you are able to convert a bash script to python, or any other shell scripting language, please 
 
-<img src="https://assets.ubuntu.com/v1/c9dc2869-Use-snap-commands.svg" height="36" align="left">
+<img src="https://assets.ubuntu.com/v1/c9dc2869-Use-snap-commands.svg" height="48" align="left">
 
-### Systems Management Scripts
+## Systems Management Scripts
 
-#### FIPS configurations at scale with Landscape
+### FIPS configurations at scale with Landscape
 
 - [Tutorial](https://ubuntu.com/tutorials/manage-ua-client-fips-configurations-at-scale-with-landscape): Enable and disable the Ubuntu Advantage FIPS entitlement in an auditable manner, through Landscape
     - [`fipsenable.sh`](./management/FIPS/fipsenable.sh)
@@ -45,7 +45,7 @@ If you are able to convert a bash script to python, or any other shell scripting
 - [Tutorial](https://ubuntu.com/tutorials/audit-ua-client-fips-configurations-at-scale-with-landscape): Track the Ubuntu Advantage FIPS entitlement in an auditable manner, through Landscape
     - [`fipsannotations.sh`](./management/FIPS/fipsannotations.sh)
 
-#### Blocking Software Package Installation with Landscape
+### Blocking Software Package Installation with Landscape
 
 - [Tutorial](https://ubuntu.com/tutorials/blocking-software-package-installation-with-landscape): Granular software restrictions by apt package name.
     - [`bypackagename.sh`](./management/Block%20Installation%20with%20Apt/bypackagename.sh)
@@ -54,11 +54,11 @@ If you are able to convert a bash script to python, or any other shell scripting
     - `allpackages.sh` - pending
     - `allpackages.py` - pending
 
-<img src="https://assets.ubuntu.com/v1/d3aa493c-Build-your-first-snap.svg" height="36" align="left">
+<img src="https://assets.ubuntu.com/v1/d3aa493c-Build-your-first-snap.svg" height="48" align="left">
 
-### Systems Monitoring Scripts
+## Systems Monitoring Scripts
 
-#### Livepatch Graphs
+### Livepatch Graphs
 
 - [Tutorial](https://ubuntu.com/tutorials/add-livepatch-graphs-in-landscape): chart kernel live patching activities over time with Landscape’s custom graphs.
     - [`livepatchcount.sh`](./monitoring/Livepatch/livepatchcount.sh)
