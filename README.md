@@ -38,6 +38,9 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
     - **livepatchenable.py** - conversion needed
     - [**livepatchdisable.sh**](./management/security/livepatchdisable.sh)
     - **livepatchdisable.py** - conversion needed
+- [**Tutorial**](): Track the Livepatch entitlement in an auditable manner, through Landscape
+    - [**livepatchannotations.sh**](./management/security/livepatchannotations.sh)
+    - **livepatchannotations.py** - pending
 
 ### Ubuntu Advantage and Ubuntu Pro Subscriptions
 
