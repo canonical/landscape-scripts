@@ -81,6 +81,10 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 
 ### Livepatch Graphs
 
+- **Tutorial**: find inaccessible security updates on any Ubuntu instance, by identifying the availability of software updates from the security pocket of the Expanded Security Maintenance repository. This tutorial does not yet exist. Feel free to contribute!
+    - **securitystatus.sh** - pending
+    - [**securitystatus.py**](./monitoring/security/securitystatus.py)
+
 - [**Tutorial**](https://ubuntu.com/tutorials/add-livepatch-graphs-in-landscape): chart kernel live patching activities over time with Landscape’s custom graphs.
     - [**livepatchcount.sh**](./monitoring/Livepatch/livepatchcount.sh)
     - **livepatchcount.py** - conversion needed
