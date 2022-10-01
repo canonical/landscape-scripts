@@ -47,6 +47,8 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
     - **allpackages.sh** - pending
     - **allpackages.py** - pending
 
+---
+
 <img src="https://assets.ubuntu.com/v1/d3aa493c-Build-your-first-snap.svg" height="48" align="left">
 
 ## Systems Monitoring Scripts
