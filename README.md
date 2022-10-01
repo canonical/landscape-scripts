@@ -20,7 +20,7 @@ If you:
 - are able to convert a bash script to python
 - can convert scripts to any other shell scripting language
 
-Do not hesitate to submit a pull request to this repository. If appropriate, you are encouraged to [write a companion tutorial](https://ubuntu.com/tutorials/tutorial-guidelines) for your contribution, or suggest updates to the existing tutorials.
+Do not hesitate to submit a pull request to this repository. If appropriate, you are encouraged to [**write a companion tutorial**](https://ubuntu.com/tutorials/tutorial-guidelines) for your contribution, or suggest updates to the existing tutorials.
 
 ---
 
@@ -30,17 +30,17 @@ Do not hesitate to submit a pull request to this repository. If appropriate, you
 
 ### FIPS configurations at scale with Landscape
 
-- [Tutorial](https://ubuntu.com/tutorials/manage-ua-client-fips-configurations-at-scale-with-landscape): Enable and disable the Ubuntu Advantage FIPS entitlement in an auditable manner, through Landscape
+- [**Tutorial**](https://ubuntu.com/tutorials/manage-ua-client-fips-configurations-at-scale-with-landscape): Enable and disable the Ubuntu Advantage FIPS entitlement in an auditable manner, through Landscape
     - [**fipsenable.sh**](./management/FIPS/fipsenable.sh)
     - **fispenable.py** - conversion needed
     - [**fipsdisable.sh**](./management/FIPS/fipsdisable.sh)
     - **fipsdisable.py** - conversion needed
-- [Tutorial](https://ubuntu.com/tutorials/audit-ua-client-fips-configurations-at-scale-with-landscape): Track the Ubuntu Advantage FIPS entitlement in an auditable manner, through Landscape
+- [**Tutorial**](https://ubuntu.com/tutorials/audit-ua-client-fips-configurations-at-scale-with-landscape): Track the Ubuntu Advantage FIPS entitlement in an auditable manner, through Landscape
     - [**fipsannotations.sh**](./management/FIPS/fipsannotations.sh)
 
 ### Blocking Software Package Installation with Landscape
 
-- [Tutorial](https://ubuntu.com/tutorials/blocking-software-package-installation-with-landscape): Granular software restrictions by apt package name.
+- [**Tutorial**](https://ubuntu.com/tutorials/blocking-software-package-installation-with-landscape): Granular software restrictions by apt package name.
     - [**bypackagename.sh**](./management/Block%20Installation%20with%20Apt/bypackagename.sh)
     - **bypackagename.py** - conversion needed
 - Tutorial: There is a need to programmatically create **.pref** files to block all packages from Universe. This allows tightly regulated environments to lock down their Ubuntu environments, and loosen restrictions as needed. This tutorial and its companion scripts do not yet exist. Feel free to contribute!
@@ -53,6 +53,6 @@ Do not hesitate to submit a pull request to this repository. If appropriate, you
 
 ### Livepatch Graphs
 
-- [Tutorial](https://ubuntu.com/tutorials/add-livepatch-graphs-in-landscape): chart kernel live patching activities over time with Landscape’s custom graphs.
+- [**Tutorial**](https://ubuntu.com/tutorials/add-livepatch-graphs-in-landscape): chart kernel live patching activities over time with Landscape’s custom graphs.
     - [**livepatchcount.sh**](./monitoring/Livepatch/livepatchcount.sh)
     - **livepatchcount.py** - conversion needed
