@@ -25,17 +25,17 @@ The **Activities** tab in the Landscape dashboard conveys which user is responsi
 
 Landscape Scripts can be authored in any familiar shell scripting language. Some scripts are easier to implement with bash, others are easier to implement with Python. The goal of this project is to continuously improve and grow a collection of useful scripts that perform systems management or systems monitoring functions.
 
-## Systems Management Scripts
-
 <img src="https://assets.ubuntu.com/v1/c9dc2869-Use-snap-commands.svg" height="48" align="left">
+
+## Systems Management Scripts
 
 ### name of first script
 
 lorem ipsum
 
-## Systems Monitoring Scripts
-
 <img src="https://assets.ubuntu.com/v1/d3aa493c-Build-your-first-snap.svg" height="48" align="left">
+
+## Systems Monitoring Scripts
 
 ### name of first script
 
