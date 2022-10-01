@@ -19,7 +19,7 @@ If you
 - have an idea for a new script
 - are able to convert a bash script to python
 - can convert scripts to any other shell scripting language
-- have thoughts around improving the overall quality of this material
+- have thoughts around improving the quality of this material
 
 Do not hesitate to fork this repository, and submit a pull request with your improvements. If appropriate, you are encouraged to [**write a companion tutorial**](https://ubuntu.com/tutorials/tutorial-guidelines) for your contribution, or suggest updates to the existing tutorials.
 
