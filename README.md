@@ -31,24 +31,24 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 ### Security Patching
 - [**Tutorial**](https://ubuntu.com/tutorials/test-and-deploy-individual-cve-fixes-with-ua-client-and-landscape): Test and deploy individual CVE fixes with UA Client and Landscape
     - [**uafix.sh**](./management/security/uafix.sh): Granular security patching by USN patch number of CVE number.
-    - **uafix.py** - pending
+    - **uafix.py** - conversion needed
 - [**Tutorial**](https://ubuntu.com/tutorials/manage-livepatch-configurations-at-scale-with-landscape): Enable or disable Livepatch at scale with Landscape
     - [**livepatchenable.sh**](./management/security/livepatchenable.sh)
-    - **livepatchenable.py** - pending
+    - **livepatchenable.py** - conversion needed
     - [**livepatchdisable.sh**](./management/security/livepatchdisable.sh)
-    - **livepatchdisable.py** - pending
+    - **livepatchdisable.py** - conversion needed
 
 ### Ubuntu Advantage and Ubuntu Pro Subscriptions
 
 - **Tutorial**: add annotations to machines in Landscape, identifying each machine's Ubuntu Advantage entitlements. This tutorial does not yet exist.
     - [**uastatus.sh**](./management/Pro/uastatus.sh)
-    - **uastatus.py** - pending
+    - **uastatus.py** - conversion needed
 - [**Tutorial**](https://ubuntu.com/tutorials/audit-ua-client-esm-configurations-at-scale-with-landscape): Audit UA Client ESM configurations at scale with Landscape
     - [**esmaudit.sh**](./management/Pro/esmaudit.sh)
     - **esmaudit.py** - conversion needed
 - [**Tutorial**](): Enable ESM configurations at scale with UA Client and Landscape
     - [**esmenable.sh**](./management/Pro/esmenable.sh)
-    - **esmenable.py** - pending
+    - **esmenable.py** - conversion needed
 
 ### FIPS configurations at scale with Landscape
 
