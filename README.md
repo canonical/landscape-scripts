@@ -31,6 +31,7 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 ### Security Patching
 - [**Tutorial**](https://ubuntu.com/tutorials/test-and-deploy-individual-cve-fixes-with-ua-client-and-landscape): Test and deploy individual CVE fixes with UA Client and Landscape
     - [**uafix.sh**](./management/security/uafix.sh): Granular security patching by USN patch number of CVE number.
+    - **uafix.py** - pending
 - [**Tutorial**](https://ubuntu.com/tutorials/manage-livepatch-configurations-at-scale-with-landscape): Enable or disable Livepatch at scale with Landscape
     - [**livepatchenable.sh**](./management/security/livepatchenable.sh)
     - **livepatchenable.py** - pending
