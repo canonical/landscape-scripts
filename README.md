@@ -31,6 +31,9 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 ### Ubuntu Advantage and Ubuntu Pro Subscriptions
 - **Tutorial**: add annotations to machines in Landscape, identifying each machine's Ubuntu Advantage entitlements. This tutorial does not yet exist.
     - [**uastatus.sh**](./management/Pro/uastatus.sh)
+- [**Tutorial**](https://ubuntu.com/tutorials/audit-ua-client-esm-configurations-at-scale-with-landscape): Audit UA Client ESM configurations at scale with Landscape
+    - [**esmaudit.sh**](./management/Pro/esmaudit.sh)
+    - **esmaudit.py** - conversion needed
 
 ### FIPS configurations at scale with Landscape
 
