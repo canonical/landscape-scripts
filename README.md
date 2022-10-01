@@ -35,6 +35,9 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 - [**Tutorial**](https://ubuntu.com/tutorials/audit-ua-client-esm-configurations-at-scale-with-landscape): Audit UA Client ESM configurations at scale with Landscape
     - [**esmaudit.sh**](./management/Pro/esmaudit.sh)
     - **esmaudit.py** - conversion needed
+- [**Tutorial**](): Enable ESM configurations at scale with UA Client and Landscape
+    - [**esmenable.sh**](./management/Pro/esmenable.sh)
+    - **esmenable.py** - pending
 
 ### FIPS configurations at scale with Landscape
 
