@@ -28,7 +28,12 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 
 ## Systems Management Scripts
 
+### Security Patching
+- [**Tutorial**](https://ubuntu.com/tutorials/test-and-deploy-individual-cve-fixes-with-ua-client-and-landscape): Test and deploy individual CVE fixes with UA Client and Landscape
+    - [**uafix.sh**](./management/security/uafix.sh): Granular security patching by USN patch number of CVE number.
+
 ### Ubuntu Advantage and Ubuntu Pro Subscriptions
+
 - **Tutorial**: add annotations to machines in Landscape, identifying each machine's Ubuntu Advantage entitlements. This tutorial does not yet exist.
     - [**uastatus.sh**](./management/Pro/uastatus.sh)
     - **uastatus.py** - pending
