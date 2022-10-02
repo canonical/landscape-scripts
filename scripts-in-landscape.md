@@ -1,4 +1,4 @@
-<img src="https://assets.ubuntu.com/v1/bc04c279-landscape-title-logo-white.svg" height="150">
+<img src="https://assets.ubuntu.com/v1/90fc25a2-landscape-logo.svg" height="50">
 
 # Adding Scripts to Landscape
 
