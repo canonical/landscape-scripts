@@ -1,0 +1,23 @@
+#cloud-config
+snap:
+ commands:
+   - ['install', 'juju', '--classic']
+runcmd:
+ - iptables -F && netfilter-persistent save
+ - su ubuntu -c "juju bootstrap localhost cloudlandscape"
+ - CPU_ARCH=`dpkg --print-architecture`
+ - su ubuntu -c "juju set-model-constraints arch=$CPU_ARCH"
+ - su ubuntu -c "juju deploy landscape-scalable --channel edge"
+ - su ubuntu -c "juju remove-application haproxy --force --no-wait"
+ - SSL_CERT=SELFSIGNED
+ - SSL_KEY=SELFSIGNED
+ - su ubuntu -c "juju deploy haproxy --config default_timeouts='queue 60000, connect 5000, client 120000, server 120000' --config services='' --config ssl_cert=$SSL_CERT --config ssl_key=$SSL_KEY --config global_default_bind_options='no-tlsv10' --series focal"
+ - su ubuntu -c "juju expose haproxy"
+ - su ubuntu -c "juju relate landscape-server haproxy"
+ - INTERFACE=`ip -4 route ls | awk '/default/ {print $5}'`
+ - INTERFACE_IP=`ip -o -4 addr list $INTERFACE | awk '{print $4}' | cut -d'/' -f1`
+ - HAPROXY_UNIT_IP=`su ubuntu -c "juju run --unit haproxy/1 'network-get public --ingress-address=true'"`
+ - PORT=443
+ - iptables -t nat -I PREROUTING -i $INTERFACE -p tcp -d $INTERFACE_IP --dport $PORT -j DNAT --to-destination $HAPROXY_UNIT_IP:$PORT -m comment --comment haproxy
+ - PORT=80
+ - iptables -t nat -I PREROUTING -i $INTERFACE -p tcp -d $INTERFACE_IP --dport $PORT -j DNAT --to-destination $HAPROXY_UNIT_IP:$PORT -m comment --comment haproxy

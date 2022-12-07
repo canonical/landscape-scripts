@@ -88,3 +88,14 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 - [**Tutorial**](https://ubuntu.com/tutorials/add-livepatch-graphs-in-landscape): chart kernel live patching activities over time with Landscape’s custom graphs.
     - [**livepatchcount.sh**](./monitoring/Livepatch/livepatchcount.sh)
     - **livepatchcount.py** - conversion needed
+
+---
+
+<img src="https://assets.ubuntu.com/v1/4a28b0b5-menu-icon--product-cloud-init.svg" height="48" align="left">
+
+## Landscape Deployment Script
+
+### Deploy Landscape with cloud-init and Juju
+
+- **Tutorial**: Deploy Landscape to an ARM powered Ubuntu instance on Oracle Public Cloud. This tutorial does not yet exist.
+    - [**cloud-init.yaml**]*(./provisioning/cloud-init.yaml)
