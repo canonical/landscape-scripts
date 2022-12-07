@@ -98,4 +98,4 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 ### Deploy Landscape with cloud-init and Juju
 
 - **Tutorial**: Deploy Landscape to an ARM powered Ubuntu instance on Oracle Public Cloud. This tutorial does not yet exist.
-    - [**cloud-init.yaml**]*(./provisioning/cloud-init.yaml)
+    - [**cloud-init.yaml**](./provisioning/cloud-init.yaml)
