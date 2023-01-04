@@ -73,6 +73,11 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
     - **allpackages.sh** - pending
     - **allpackages.py** - pending
 
+### Get all computers from Landscape
+
+- A Windows PowerShell function to get all registered computers from Canonical Landscape.
+    - [**Get-LSComputers.ps1**](./management/Get-LSComputers/Get-LSComputers.ps1)
+
 ---
 
 <img src="https://assets.ubuntu.com/v1/d3aa493c-Build-your-first-snap.svg" height="48" align="left">
