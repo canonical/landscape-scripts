@@ -2,14 +2,14 @@
 livepatchannotations() {
   local UASTATUS
   local UANOTATTACHED
-  UASTATUS=$(ua status)
-  UANOTATTACHED=$(echo "$UASTATUS" | grep -c 'This machine is not attached to a UA subscription.')
+  UASTATUS=$(pro status)
+  UANOTATTACHED=$(echo "$UASTATUS" | grep -c 'This machine is not attached')
   if [[ $UANOTATTACHED -eq 1 ]]; then
     echo 'unavailable' > /var/lib/landscape/client/annotations.d/livepatch
-    echo "'ua status' reports this machine is not attached to a UA subscription."
+    echo "'pro status' reports this machine is not attached to an Ubuntu Pro subscription."
   else
     servicestatus 'livepatch' > /var/lib/landscape/client/annotations.d/livepatch
-    echo "'ua status' reports livepatch is $(servicestatus 'livepatch')"
+    echo "'pro status' reports livepatch is $(servicestatus 'livepatch')"
   fi
   chown landscape: /var/lib/landscape/client/annotations.d/livepatch
 }
