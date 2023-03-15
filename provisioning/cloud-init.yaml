@@ -1,22 +1,66 @@
+## template: jinja
 #cloud-config
+
+# SET OUR VARIABLES
+# =================
+
+# Assuming you use SSL from LetsEncrypt, follow these steps on your Ubuntu workstation
+# replace landscape.yourdomain.com with the domain name you will use for Landscape
+
+# sudo snap install certbot --classic
+# sudo certbot -d landscape.yourdomain.com --manual --preferred-challenges dns certonly
+
+# The value for SSL_CERT below is the output of:
+# sudo base64 -w 0 /etc/letsencrypt/live/landscape.yourdomain.com/fullchain.pem
+{% set SSL_CERT = 'SELFSIGNED' %}
+
+# The value for SSL_KEY below is the output of:
+# sudo base64 -w 0 /etc/letsencrypt/live/landscape.yourdomain.com/privkey.pem
+{% set SSL_KEY = 'SELFSIGNED' %}
+
+# LANDSCAPE_FQDN is the domain name you will use for Landscape
+{% set LANDSCAPE_FQDN = 'landscape.yourdomain.com' %}
+
+# =========================
+# END OF SETTING VARIABLES
+
+write_files:
+  - path: /tmp/redeploy_haproxy.sh
+    owner: 'ubuntu:ubuntu'
+    permissions: '0755'
+    defer: true
+    content: |
+      #!/bin/bash
+      juju remove-application haproxy --force --no-wait
+      SSL_CERT="{{ SSL_CERT }}"
+      SSL_KEY="{{ SSL_KEY }}"
+      juju deploy haproxy --config default_timeouts='queue 60000, connect 5000, client 120000, server 120000' --config services='' --config ssl_cert=$SSL_CERT --config ssl_key=$SSL_KEY --config global_default_bind_options='no-tlsv10' --series focal
+      juju expose haproxy
+      juju relate landscape-server haproxy
+
 snap:
  commands:
    - ['install', 'juju', '--classic']
 runcmd:
+{% if platform == 'gce' %}
+ - lxd init --auto
+ - su ubuntu -c "lxc network set lxdbr0 bridge.mtu=1460"
+{% endif %}
+{% if platform == 'oracle' %}
  - iptables -F && netfilter-persistent save
+{% endif %}
  - su ubuntu -c "juju bootstrap localhost cloudlandscape"
- - CPU_ARCH=`dpkg --print-architecture`
- - su ubuntu -c "juju set-model-constraints arch=$CPU_ARCH"
+ - su ubuntu -c "juju set-model-constraints arch=`dpkg --print-architecture`"
  - su ubuntu -c "juju deploy landscape-scalable --channel edge"
- - su ubuntu -c "juju remove-application haproxy --force --no-wait"
- - SSL_CERT=SELFSIGNED
- - SSL_KEY=SELFSIGNED
- - su ubuntu -c "juju deploy haproxy --config default_timeouts='queue 60000, connect 5000, client 120000, server 120000' --config services='' --config ssl_cert=$SSL_CERT --config ssl_key=$SSL_KEY --config global_default_bind_options='no-tlsv10' --series focal"
- - su ubuntu -c "juju expose haproxy"
- - su ubuntu -c "juju relate landscape-server haproxy"
- - INTERFACE=`ip -4 route ls | awk '/default/ {print $5}'`
- - INTERFACE_IP=`ip -o -4 addr list $INTERFACE | awk '{print $4}' | cut -d'/' -f1`
- - HAPROXY_UNIT_IP=`su ubuntu -c "juju run --unit haproxy/1 'network-get public --ingress-address=true'"`
+ - su ubuntu -c "[[ $(dpkg --print-architecture) == 'arm64' ]] && /tmp/redeploy_haproxy.sh"
+{% if SSL_KEY != "SELFSIGNED" %}
+ - su ubuntu -c "[[ $(dpkg --print-architecture) == 'amd64' ]] && /tmp/redeploy_haproxy.sh"
+{% endif %}
+ - INTERFACE="ip -4 route ls | awk '/default/ {print $5}'"
+ - INTERFACE_IP="ip -o -4 addr list $INTERFACE | awk '{print $4}' | cut -d'/' -f1"
+ - su ubuntu -c "juju status --format=yaml | grep 'haproxy/' | sed 's/.*\///; s/://'" > /tmp/HAPROXY_INSTANCE_NUMBER.txt
+ - su ubuntu -c "juju run --unit haproxy/$(cat /tmp/HAPROXY_INSTANCE_NUMBER.txt) 'network-get public --ingress-address=true'" > /tmp/HAPROXY_UNIT_IP.txt
+ - HAPROXY_UNIT_IP=$(cat /tmp/HAPROXY_UNIT_IP.txt)
  - PORT=443
  - iptables -t nat -I PREROUTING -i $INTERFACE -p tcp -d $INTERFACE_IP --dport $PORT -j DNAT --to-destination $HAPROXY_UNIT_IP:$PORT -m comment --comment haproxy
  - PORT=80
