@@ -56,11 +56,11 @@ runcmd:
 {% if SSL_KEY != "SELFSIGNED" %}
  - su ubuntu -c "[[ $(dpkg --print-architecture) == 'amd64' ]] && /tmp/redeploy_haproxy.sh"
 {% endif %}
- - INTERFACE="ip -4 route ls | awk '/default/ {print $5}'"
- - INTERFACE_IP="ip -o -4 addr list $INTERFACE | awk '{print $4}' | cut -d'/' -f1"
+ - INTERFACE=`ip -4 route ls | awk '/default/ {print $5}'`
+ - INTERFACE_IP=`ip -o -4 addr list $INTERFACE | awk '{print $4}' | cut -d'/' -f1`
  - su ubuntu -c "juju status --format=yaml | grep 'haproxy/' | sed 's/.*\///; s/://'" > /tmp/HAPROXY_INSTANCE_NUMBER.txt
  - su ubuntu -c "juju run --unit haproxy/$(cat /tmp/HAPROXY_INSTANCE_NUMBER.txt) 'network-get public --ingress-address=true'" > /tmp/HAPROXY_UNIT_IP.txt
- - HAPROXY_UNIT_IP=$(cat /tmp/HAPROXY_UNIT_IP.txt)
+ - HAPROXY_UNIT_IP=`cat /tmp/HAPROXY_UNIT_IP.txt`
  - PORT=443
  - iptables -t nat -I PREROUTING -i $INTERFACE -p tcp -d $INTERFACE_IP --dport $PORT -j DNAT --to-destination $HAPROXY_UNIT_IP:$PORT -m comment --comment haproxy
  - PORT=80
