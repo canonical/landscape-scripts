@@ -80,15 +80,9 @@ runcmd:
  - |
    if [ $(dpkg --print-architecture) = 'arm64' ]; then
      /bin/bash /tmp/redeploy_haproxy.sh
-   fi
+   else
 {% if SSL_KEY != "SELFSIGNED" %}
- - |
-   if [ $(dpkg --print-architecture) = 'amd64' ]; then
-     /bin/bash /tmp/redeploy_haproxy.sh
-   fi
-{% else %}
- - |
-   if [ $(dpkg --print-architecture) = 'amd64' ]; then
+     su ubuntu -c "juju config haproxy ssl_cert='{{ SSL_CERT }}' --config ssl_key='{{ SSL_KEY }}'"
+{% endif %}
      /bin/bash /home/ubuntu/iptables_portforward.sh
    fi
-{% endif %}
