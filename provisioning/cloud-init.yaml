@@ -39,11 +39,9 @@ write_files:
     defer: true
     content: |
       #!/bin/bash
-      echo "redeploying haproxy..."
+      echo "arm64 detected - redeploying haproxy due to a known issue with the HAProxy Charm on arm64"
       su ubuntu -c "juju remove-application haproxy"
-      SSL_CERT="{{ SSL_CERT }}"
-      SSL_KEY="{{ SSL_KEY }}"
-      su ubuntu -c "juju deploy haproxy --config default_timeouts='queue 60000, connect 5000, client 120000, server 120000' --config services='' --config ssl_cert=$SSL_CERT --config ssl_key=$SSL_KEY --config global_default_bind_options='no-tlsv10' --series focal"
+      su ubuntu -c "juju deploy haproxy --config default_timeouts='queue 60000, connect 5000, client 120000, server 120000' --config services='' --config ssl_cert='{{ SSL_CERT }}' --config ssl_key='{{ SSL_KEY }}' --config global_default_bind_options='no-tlsv10' --series focal"
       su ubuntu -c "juju expose haproxy"
       su ubuntu -c "juju relate landscape-server haproxy"
       /bin/bash /home/ubuntu/iptables_portforward.sh
