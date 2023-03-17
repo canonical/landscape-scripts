@@ -53,7 +53,7 @@ write_files:
     defer: true
     content: |
       #!/bin/bash
-      echo "applying port forwarding..."
+      echo "applying port forwarding... (may take several minutes)"
       iptables -t nat -L --line-numbers | grep "haproxy" | awk -F "" '{print $1}' | sort -rn | xargs -I {} iptables -t nat -D PREROUTING {}
       read -r HAPROXY_INSTANCE_NUMBER < <(su - ubuntu -c "juju status --format=json | awk -F'haproxy/' '{print substr(\$2,1,1)}'")
       read -r HAPROXY_UNIT_IP < <(su ubuntu -c "juju run --unit haproxy/$HAPROXY_INSTANCE_NUMBER 'network-get public --ingress-address=true'")
