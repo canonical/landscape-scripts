@@ -82,7 +82,7 @@ runcmd:
      /bin/bash /tmp/redeploy_haproxy.sh
    else
 {% if SSL_KEY != "SELFSIGNED" %}
-     su ubuntu -c "juju config haproxy ssl_cert='{{ SSL_CERT }}' --config ssl_key='{{ SSL_KEY }}'"
+     su ubuntu -c "juju config haproxy ssl_cert='{{ SSL_CERT }}' ssl_key='{{ SSL_KEY }}'"
 {% endif %}
      /bin/bash /home/ubuntu/iptables_portforward.sh
    fi
