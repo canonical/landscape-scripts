@@ -18,9 +18,6 @@
 # sudo base64 -w 0 /etc/letsencrypt/live/landscape.yourdomain.com/privkey.pem
 {% set SSL_KEY = 'SELFSIGNED' %}
 
-# LANDSCAPE_FQDN is the domain name you will use for Landscape
-{% set LANDSCAPE_FQDN = 'landscape.yourdomain.com' %}
-
 # =========================
 # END OF SETTING VARIABLES
 
