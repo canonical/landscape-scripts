@@ -4,6 +4,9 @@
 # SET OUR VARIABLES
 # =================
 
+# Choose which channel of self-hosted Landscape you wish to deploy: stable|beta|edge
+{% set CHANNEL = 'edge' %}
+
 # Assuming you use SSL from LetsEncrypt, follow these steps on your Ubuntu workstation
 # replace landscape.yourdomain.com with the domain name you will use for Landscape
 
@@ -71,7 +74,7 @@ runcmd:
 {% endif %}
  - su ubuntu -c "juju bootstrap localhost lxdlandscape"
  - su ubuntu -c "juju set-model-constraints arch=$(dpkg --print-architecture)"
- - su ubuntu -c "juju deploy landscape-scalable --channel edge"
+ - su ubuntu -c "juju deploy landscape-scalable --channel {{ CHANNEL }}"
  - |
    if [ $(dpkg --print-architecture) = 'arm64' ]; then
      /bin/bash /tmp/redeploy_haproxy.sh
