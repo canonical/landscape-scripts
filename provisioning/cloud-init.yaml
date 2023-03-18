@@ -7,6 +7,12 @@
 # Choose which channel of self-hosted Landscape you wish to deploy: stable|beta|edge
 {% set CHANNEL = 'edge' %}
 
+# Ubuntu Pro token (leave blank for Ubuntu Pro instances on Azure, AWS, or Google Cloud)
+{% set TOKEN = '' %}
+
+# Livepatching for critical kernel security vulnerabilities: enable|disable
+{% set LIVEPATCH = 'enable' %}
+
 # Assuming you use SSL from LetsEncrypt, follow these steps on your Ubuntu workstation
 # replace landscape.yourdomain.com with the domain name you will use for Landscape
 
@@ -84,3 +90,9 @@ runcmd:
 {% endif %}
      /bin/bash /home/ubuntu/iptables_portforward.sh
    fi
+{% if TOKEN is not none %}
+ - pro attach {{ TOKEN }}
+{% endif %}
+{% if LIVEPATCH in ["enable", "disable"] %}
+ - pro {{ LIVEPATCH }} livepatch
+{% endif %}
