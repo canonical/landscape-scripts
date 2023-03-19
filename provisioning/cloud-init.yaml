@@ -10,9 +10,6 @@
 # Ubuntu Pro token (leave blank for Ubuntu Pro instances on Azure, AWS, or Google Cloud)
 {% set TOKEN = '' %}
 
-# Livepatching for critical kernel security vulnerabilities: enable|disable
-{% set LIVEPATCH = 'enable' %}
-
 # Assuming you use SSL from LetsEncrypt, follow these steps on your Ubuntu workstation
 # replace landscape.yourdomain.com with the domain name you will use for Landscape
 
@@ -36,35 +33,7 @@ packages:
   - iptables
   - iptables-persistent
   - snapd
-  - lxc
-
-write_files:
-  - path: /tmp/redeploy_haproxy.sh
-    owner: 'ubuntu:ubuntu'
-    permissions: '0755'
-    defer: true
-    content: |
-      #!/bin/bash
-      echo "arm64 detected - redeploying haproxy due to a known issue with the HAProxy Charm on arm64"
-      su ubuntu -c "juju remove-application haproxy"
-      su ubuntu -c "juju deploy haproxy --config default_timeouts='queue 60000, connect 5000, client 120000, server 120000' --config services='' --config ssl_cert='{{ SSL_CERT }}' --config ssl_key='{{ SSL_KEY }}' --config global_default_bind_options='no-tlsv10' --series focal"
-      su ubuntu -c "juju expose haproxy"
-      su ubuntu -c "juju relate landscape-server haproxy"
-      /bin/bash /home/ubuntu/iptables_portforward.sh
-  - path: /home/ubuntu/iptables_portforward.sh
-    owner: 'ubuntu:ubuntu'
-    permissions: '0755'
-    defer: true
-    content: |
-      #!/bin/bash
-      echo "applying port forwarding... (may take several minutes)"
-      iptables -t nat -L --line-numbers | grep "haproxy" | awk -F "" '{print $1}' | sort -rn | xargs -I {} iptables -t nat -D PREROUTING {}
-      read -r HAPROXY_INSTANCE_NUMBER < <(su - ubuntu -c "juju status --format=json | awk -F'haproxy/' '{print substr(\$2,1,1)}'")
-      read -r HAPROXY_UNIT_IP < <(su ubuntu -c "juju run --unit haproxy/$HAPROXY_INSTANCE_NUMBER 'network-get public --ingress-address=true'")
-      read -r INTERFACE INTERFACE_IP < <(ip -4 route ls | awk '/default/{print $5, $9}')
-      for PORT in 443 80; do
-        iptables -t nat -I PREROUTING -i $INTERFACE -p tcp -d $INTERFACE_IP --dport $PORT -j DNAT --to-destination $HAPROXY_UNIT_IP:$PORT -m comment --comment haproxy
-      done
+  - ubuntu-advantage-tools
 
 snap:
  commands:
@@ -73,12 +42,12 @@ snap:
 runcmd:
 {% if platform == 'gce' %}
  - lxd init --auto
- - su ubuntu -c "lxc network set lxdbr0 bridge.mtu=1460"
+ - su ubuntu -c 'lxc network set lxdbr0 bridge.mtu=1460'
 {% endif %}
 {% if platform == 'oracle' %}
  - iptables -F && netfilter-persistent save
 {% endif %}
- - su ubuntu -c "juju bootstrap localhost lxdlandscape"
+ - su ubuntu -c 'juju bootstrap localhost lxdlandscape'
  - su ubuntu -c "juju set-model-constraints arch=$(dpkg --print-architecture)"
  - su ubuntu -c "juju deploy landscape-scalable --channel {{ CHANNEL }}"
  - |
@@ -90,9 +59,40 @@ runcmd:
 {% endif %}
      /bin/bash /home/ubuntu/iptables_portforward.sh
    fi
-{% if TOKEN is not none %}
- - pro attach {{ TOKEN }}
+
+write_files:
+  - path: /tmp/redeploy_haproxy.sh
+    owner: 'ubuntu:ubuntu'
+    permissions: '0755'
+    defer: true
+    content: |
+      #!/bin/bash
+      echo 'arm64 detected - redeploying haproxy due to a known issue with the HAProxy Charm on arm64'
+      su ubuntu -c 'juju remove-application haproxy'
+      su ubuntu -c "juju deploy haproxy --config default_timeouts='queue 60000, connect 5000, client 120000, server 120000' --config services='' --config ssl_cert='{{ SSL_CERT }}' --config ssl_key='{{ SSL_KEY }}' --config global_default_bind_options='no-tlsv10' --series focal"
+      su ubuntu -c 'juju expose haproxy'
+      su ubuntu -c 'juju relate landscape-server haproxy'
+      echo 'redeploy_haproxy.sh completed'
+      /bin/bash /home/ubuntu/iptables_portforward.sh
+  - path: /home/ubuntu/iptables_portforward.sh
+    owner: 'ubuntu:ubuntu'
+    permissions: '0755'
+    defer: true
+    content: |
+      #!/bin/bash
+      echo 'applying port forwarding... (may take several minutes)'
+      iptables -t nat -L --line-numbers | grep 'haproxy' | awk -F '' '{print $1}' | sort -rn | xargs -I {} iptables -t nat -D PREROUTING {}
+      read -r HAPROXY_INSTANCE_NUMBER < <(su - ubuntu -c "juju status --format=json | awk -F'haproxy/' '{print substr(\$2,1,1)}'")
+      read -r HAPROXY_UNIT_IP < <(su ubuntu -c "juju run --unit haproxy/$HAPROXY_INSTANCE_NUMBER 'network-get public --ingress-address=true'")
+      read -r INTERFACE INTERFACE_IP < <(ip -4 route ls | awk '/default/{print $5, $9}')
+      for PORT in 443 80; do
+        iptables -t nat -I PREROUTING -i $INTERFACE -p tcp -d $INTERFACE_IP --dport $PORT -j DNAT --to-destination $HAPROXY_UNIT_IP:$PORT -m comment --comment haproxy
+      done
+      echo 'iptables_portforward.sh completed'
+
+ubuntu_advantage:
+{% if TOKEN %}
+  token: {{ TOKEN }}
 {% endif %}
-{% if LIVEPATCH in ["enable", "disable"] %}
- - pro {{ LIVEPATCH }} livepatch
-{% endif %}
+  enable:
+  - livepatch
