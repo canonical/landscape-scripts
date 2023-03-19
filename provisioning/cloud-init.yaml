@@ -42,12 +42,12 @@ snap:
    - ['install', 'jq']
 
 runcmd:
-{% if platform == 'gce' %}
- - lxd init --auto
- - su ubuntu -c 'lxc network set lxdbr0 bridge.mtu=1460'
-{% endif %}
 {% if platform == 'oracle' %}
  - iptables -F && netfilter-persistent save
+{% endif %}
+ - lxd init --auto
+{% if platform == 'gce' %}
+ - su ubuntu -c 'lxc network set lxdbr0 bridge.mtu=1460'
 {% endif %}
  - su ubuntu -c 'juju bootstrap localhost lxdlandscape'
  - su ubuntu -c "juju set-model-constraints arch=$(dpkg --print-architecture)"
