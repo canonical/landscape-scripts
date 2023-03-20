@@ -39,7 +39,6 @@ package_reboot_if_required: true
 snap:
  commands:
    - ['install', 'juju', '--classic']
-   - ['install', 'jq']
 
 runcmd:
 {% if platform == 'oracle' %}
@@ -86,15 +85,7 @@ write_files:
       echo "$(date +'%Y-%m-%d %H:%M:%S'): iptables_portforward.sh started - waiting for all containers to be assigned an IP"
       iptables -t nat -L --line-numbers | grep 'haproxy' | awk -F '' '{print $1}' | sort -rn | xargs -I {} iptables -t nat -D PREROUTING {}
       read -r HAPROXY_INSTANCE_NUMBER < <(su - ubuntu -c "juju status --format=json | awk -F'haproxy/' '{print substr(\$2,1,1)}'")
-      while true; do
-        address=$(su ubuntu -c "juju status --format=json | jq -r --arg INSTANCE haproxy/$HAPROXY_INSTANCE_NUMBER '.applications[\"haproxy\"].units[$INSTANCE][\"public-address\"]'")
-        if [ "$address" != "null" ]; then
-          echo "$(date +'%Y-%m-%d %H:%M:%S'): haproxy/$HAPROXY_INSTANCE_NUMBER has an IPv4 Address: $address, finalizing network setup"
-          break
-        fi
-        echo "$(date +'%Y-%m-%d %H:%M:%S'): haproxy/$HAPROXY_INSTANCE_NUMBER has no IPv4 address yet, waiting..."
-        sleep 5
-      done
+      su ubuntu -c "juju wait-for application --timeout=15m haproxy --logging-config="juju.plugins.waitfor=TRACE" --debug"
       read -r HAPROXY_UNIT_IP < <(su ubuntu -c "juju run --unit haproxy/$HAPROXY_INSTANCE_NUMBER 'network-get public --ingress-address=true'")
       read -r INTERFACE INTERFACE_IP < <(ip -4 route ls | awk '/default/{print $5, $9}')
       for PORT in 443 80; do
