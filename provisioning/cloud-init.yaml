@@ -91,6 +91,7 @@ write_files:
       for PORT in 443 80; do
         iptables -t nat -I PREROUTING -i $INTERFACE -p tcp -d $INTERFACE_IP --dport $PORT -j DNAT --to-destination $HAPROXY_UNIT_IP:$PORT -m comment --comment haproxy
       done
+      netfilter-persistent save
       echo "$(date +'%Y-%m-%d %H:%M:%S'): iptables_portforward.sh completed"
   - path: /tmp/juju_containers_active_check.sh
     owner: 'ubuntu:ubuntu'
