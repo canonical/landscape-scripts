@@ -100,8 +100,14 @@ write_files:
     content: |
       #!/bin/bash
       while true; do
-        countA=$(su ubuntu -c "juju status --format json | grep -o '\"application-status\":' | wc -l")
-        countB=$(su ubuntu -c "juju status --format json | grep -o '\"application-status\":{\"current\":\"active\"' | wc -l")
+        juju_status=$(su ubuntu -c "juju status --format json")
+        countA=$(echo "$juju_status" | grep -o '\"application-status\":' | wc -l)
+        countB=$(echo "$juju_status" | grep -o '\"application-status\":{\"current\":\"active\"' | wc -l)
+        countError=$(echo "$juju_status" | grep -o '\"application-status\":{\"current\":\"error\"' | wc -l)
+        if [ "$countError" -ge 1 ]; then
+          echo "Variable is less than 1"
+          exit 1
+        fi
         if [ $countA -eq $countB ]; then
           echo "$(date +'%Y-%m-%d %H:%M:%S'): All Juju containers are in an active state"
           break
