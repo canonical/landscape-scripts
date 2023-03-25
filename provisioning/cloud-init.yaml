@@ -24,6 +24,12 @@
 # sudo base64 -w 0 /etc/letsencrypt/live/landscape.yourdomain.com/privkey.pem
 {% set SSL_KEY = 'SELFSIGNED' %}
 
+# SMTP credentials (Sendgrid customers should use the "apikey" as the username, and the actual API key as the password)
+{% set SMTP_HOST = '' %}
+{% set SMTP_PORT = '' %}
+{% set SMTP_USERNAME = '' %}
+{% set SMTP_PASSWORD = '' %}
+
 # =========================
 # END OF SETTING VARIABLES
 
@@ -60,6 +66,10 @@ runcmd:
 {% endif %}
      /bin/bash /home/ubuntu/iptables_portforward.sh
    fi
+{% if SMTP_HOST %}
+ - su ubuntu -c "juju deploy postfix-relay --config smtp_auth_password='{{ SMTP_PASSWORD }}' --config smtp_auth_username='{{ SMTP_USERNAME }}' --config relayhost='[{{ SMTP_HOST }}]:{{ SMTP_PORT }}'"
+ - su ubuntu -c "juju add-relation postfix-relay landscape-server"
+{% endif %}
  - /bin/bash /tmp/juju_containers_active_check.sh
 
 write_files:
