@@ -71,6 +71,8 @@ runcmd:
  - su ubuntu -c "juju add-relation postfix-relay landscape-server"
 {% endif %}
  - /bin/bash /tmp/juju_containers_active_check.sh
+ - echo "Cloud-init completed successfully"
+ - cloud-init clean
 
 write_files:
   - path: /tmp/redeploy_haproxy.sh
