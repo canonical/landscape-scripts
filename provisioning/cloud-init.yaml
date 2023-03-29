@@ -85,7 +85,6 @@ runcmd:
 {% endif %}
  - /bin/bash /tmp/juju_containers_active_check.sh
  - echo "Cloud-init completed successfully"
- - cloud-init clean
 
 write_files:
   - path: /tmp/redeploy_haproxy.sh
