@@ -26,9 +26,12 @@
 
 # SMTP credentials (Sendgrid customers should use the "apikey" as the username, and the actual API key as the password)
 {% set SMTP_HOST = '' %}
-{% set SMTP_PORT = '' %}
+{% set SMTP_PORT = '587' %}
 {% set SMTP_USERNAME = '' %}
 {% set SMTP_PASSWORD = '' %}
+# SMTP_USE_TLS is `yes` if TLS is needed
+# Google (SMTP_HOST = smtp.google.com) requires TLS, Sendgrid (SMTP_HOST = smtp.sendgrid.net) does not
+{% set SMTP_USE_TLS = 'yes' %}
 
 # =========================
 # END OF SETTING VARIABLES
@@ -38,6 +41,9 @@ packages:
   - iptables-persistent
   - snapd
   - ubuntu-advantage-tools
+{% if SMTP_USE_TLS|lower == 'yes' %}
+  - curl
+{% endif %}
 package_update: true
 package_upgrade: true
 package_reboot_if_required: true
@@ -67,7 +73,14 @@ runcmd:
      /bin/bash /home/ubuntu/iptables_portforward.sh
    fi
 {% if SMTP_HOST %}
- - su ubuntu -c "juju deploy postfix-relay --config smtp_auth_password='{{ SMTP_PASSWORD }}' --config smtp_auth_username='{{ SMTP_USERNAME }}' --config relayhost='[{{ SMTP_HOST }}]:{{ SMTP_PORT }}'"
+ - |
+   su ubuntu -c "juju deploy postfix-relay \
+    --config smtp_auth_password='{{ SMTP_PASSWORD }}' \
+    --config smtp_auth_username='{{ SMTP_USERNAME }}' \
+{% if SMTP_USE_TLS|lower == 'yes' %}
+    --config ssl_ca=$(curl -s https://www.thawte.com/roots/thawte_Primary_Root_CA.pem | base64 | tr -d '\n') \
+{% endif %}
+    --config relayhost='[{{ SMTP_HOST }}]:{{ SMTP_PORT }}'"
  - su ubuntu -c "juju add-relation postfix-relay landscape-server"
 {% endif %}
  - /bin/bash /tmp/juju_containers_active_check.sh
