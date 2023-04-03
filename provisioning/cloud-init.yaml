@@ -5,7 +5,7 @@
 # =================
 
 # Choose which channel of self-hosted Landscape you wish to deploy: stable|beta|edge
-{% set CHANNEL = 'edge' %}
+{% set CHANNEL = 'stable' %}
 
 # Ubuntu Pro token (leave blank for Ubuntu Pro instances on Azure, AWS, or Google Cloud)
 {% set TOKEN = '' %}
