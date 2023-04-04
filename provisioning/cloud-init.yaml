@@ -53,13 +53,13 @@ snap:
    - ['install', 'juju', '--classic']
 
 runcmd:
-{% if platform == 'oracle' %}
- - iptables -F && netfilter-persistent save
-{% endif %}
+ - INTERFACE=$(read -r INTERFACE < <(ip -4 route ls | awk '$1=="default"{x=$5}END{print x}'))
+ - iptables -I FORWARD 1 -i lxdbr0 -o $INTERFACE -j ACCEPT -m comment --comment "Permit LXD bridge to $INTERFACE"
+ - iptables -I FORWARD 1 -i $INTERFACE -o lxdbr0 -j ACCEPT -m comment --comment "Permit $INTERFACE to LXD bridge"
+ - iptables -I INPUT 1 -i lxdbr0 -j ACCEPT -m comment --comment "Permit incoming on lxdbr0"
+ - iptables -I OUTPUT 1 -o lxdbr0 -j ACCEPT -m comment --comment "Permit outgoing on lxdbr0"
  - lxd init --auto
-{% if platform == 'gce' %}
- - su ubuntu -c 'lxc network set lxdbr0 bridge.mtu=1460'
-{% endif %}
+ - su ubuntu -c "lxc network set lxdbr0 bridge.mtu=$(ip link show $INTERFACE | awk '/mtu/ {print $5}')"
  - su ubuntu -c 'juju bootstrap localhost lxdlandscape'
  - su ubuntu -c "juju set-model-constraints arch=$(dpkg --print-architecture)"
  - su ubuntu -c "juju deploy landscape-scalable --channel {{ CHANNEL }}"
