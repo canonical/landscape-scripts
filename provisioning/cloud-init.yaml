@@ -53,7 +53,7 @@ snap:
    - ['install', 'juju', '--classic']
 
 runcmd:
- - INTERFACE=$(read -r INTERFACE < <(ip -4 route ls | awk '$1=="default"{x=$5}END{print x}'))
+ - read -r INTERFACE < <(ip -4 route ls | awk '$1=="default"{x=$5}END{print x}')
  - iptables -I FORWARD 1 -i lxdbr0 -o $INTERFACE -j ACCEPT -m comment --comment "Permit LXD bridge to $INTERFACE"
  - iptables -I FORWARD 1 -i $INTERFACE -o lxdbr0 -j ACCEPT -m comment --comment "Permit $INTERFACE to LXD bridge"
  - iptables -I INPUT 1 -i lxdbr0 -j ACCEPT -m comment --comment "Permit incoming on lxdbr0"
@@ -129,7 +129,7 @@ write_files:
         countB=$(echo "$juju_status" | grep -o '\"application-status\":{\"current\":\"active\"' | wc -l)
         countError=$(echo "$juju_status" | grep -o '\"application-status\":{\"current\":\"error\"' | wc -l)
         if [ "$countError" -ge 1 ]; then
-          echo "Variable is less than 1"
+          echo "Zero errors in `juju status` output"
           exit 1
         fi
         if [ $countA -eq $countB ]; then
