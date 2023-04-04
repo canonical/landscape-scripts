@@ -111,7 +111,7 @@ write_files:
       read -r HAPROXY_INSTANCE_NUMBER < <(su - ubuntu -c "juju status --format=json | awk -F'haproxy/' '{print substr(\$2,1,1)}'")
       su ubuntu -c "juju wait-for application --timeout=15m haproxy --logging-config="juju.plugins.waitfor=TRACE" --debug"
       read -r HAPROXY_UNIT_IP < <(su ubuntu -c "juju run --unit haproxy/$HAPROXY_INSTANCE_NUMBER 'network-get public --ingress-address=true'")
-      read -r INTERFACE INTERFACE_IP < <(ip -4 route ls | awk '/default/{print $5, $9}')
+      read -r INTERFACE INTERFACE_IP < <(ip -4 route ls | awk '$1=="default"{x=$5" "$9}END{print x}')
       for PORT in 443 80; do
         iptables -t nat -I PREROUTING -i $INTERFACE -p tcp -d $INTERFACE_IP --dport $PORT -j DNAT --to-destination $HAPROXY_UNIT_IP:$PORT -m comment --comment haproxy
       done
