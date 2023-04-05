@@ -104,10 +104,20 @@ write_files:
     content: |
       #!/bin/bash
       echo "$(date +'%Y-%m-%d %H:%M:%S'): redeploy_haproxy.sh started - arm64 detected, HAProxy charm needs to be redeployed on arm64 architectures"
-      su ubuntu -c 'juju remove-application haproxy'
-      su ubuntu -c "juju deploy haproxy --config default_timeouts='queue 60000, connect 5000, client 120000, server 120000' --config services='' --config ssl_cert='{{ SSL_CERT }}' --config ssl_key='{{ SSL_KEY }}' --config global_default_bind_options='no-tlsv10' --series focal"
-      su ubuntu -c 'juju expose haproxy'
-      su ubuntu -c 'juju relate landscape-server haproxy'
+      su ubuntu -c 'juju remove-application haproxy --force'
+      while true; do
+        juju_status=$(su ubuntu -c "juju status --format json")
+        count=$(echo "$juju_status" | grep -o '{\"haproxy/' | wc -l)
+        if [ "$count" -lt 1 ]; then
+          su ubuntu -c "juju deploy haproxy --config default_timeouts='queue 60000, connect 5000, client 120000, server 120000' --config services='' --config ssl_cert='{{ SSL_CERT }}' --config ssl_key='{{ SSL_KEY }}' --config global_default_bind_options='no-tlsv10' --series focal"
+          su ubuntu -c 'juju relate landscape-server haproxy'
+          break
+        else
+          echo "$(date +'%Y-%m-%d %H:%M:%S'): Waiting for haproxy/0 to be removed"
+          sleep 10
+          su ubuntu -c "juju status"
+        fi
+      done
       echo "$(date +'%Y-%m-%d %H:%M:%S'): redeploy_haproxy.sh completed"
       /bin/bash /home/ubuntu/iptables_haproxy.sh
   - path: /home/ubuntu/iptables_haproxy.sh
@@ -139,7 +149,7 @@ write_files:
         countB=$(echo "$juju_status" | grep -o '\"application-status\":{\"current\":\"active\"' | wc -l)
         countError=$(echo "$juju_status" | grep -o '\"application-status\":{\"current\":\"error\"' | wc -l)
         if [ "$countError" -ge 1 ]; then
-          echo "Zero errors in `juju status` output"
+          echo "Errors present in `juju status` output"
           exit 1
         fi
         if [ $countA -eq $countB ]; then
