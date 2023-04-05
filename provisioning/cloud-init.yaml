@@ -26,11 +26,11 @@
 
 # SMTP credentials (Sendgrid customers should use the "apikey" as the username, and the actual API key as the password)
 {% set SMTP_HOST = '' %}
-{% set SMTP_PORT = '587' %}
+{% set SMTP_PORT = '' %}
 {% set SMTP_USERNAME = '' %}
 {% set SMTP_PASSWORD = '' %}
 # SMTP_USE_TLS is `yes` if TLS is needed
-# Google (SMTP_HOST = smtp.google.com) requires TLS, Sendgrid (SMTP_HOST = smtp.sendgrid.net) does not
+# Google (SMTP_HOST=smtp.google.com SMTP_PORT=587) and Sendgrid (SMTP_HOST=smtp.sendgrid.net SMTP_PORT=465) customers should use TLS
 {% set SMTP_USE_TLS = 'yes' %}
 
 # =========================
