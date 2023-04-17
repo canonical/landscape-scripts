@@ -1,19 +1,30 @@
 #!/bin/bash
-ESMannotations() {
-  local UASTATUS
-  local UANOTATTACHED
-  UASTATUS=$(ua status)
-  UANOTATTACHED=$(echo "$UASTATUS" | grep -c 'This machine is not attached to a UA subscription.')
-  if [[ $UANOTATTACHED -eq 1 ]]; then
-    echo 'unavailable' > /var/lib/landscape/client/annotations.d/esm-infra
-    echo "'ua status' reports this machine is not attached to a UA subscription."
-  else
-    servicestatus "$UASTATUS" 'esm-infra' > /var/lib/landscape/client/annotations.d/esm-infra
-    echo "'ua status' reports ESM is $(servicestatus "$UASTATUS" 'esm-infra')"
+
+PRO_STATUS="/var/tmp/pro-status.yaml"
+
+pro_status(){
+  pro status --format yaml > $PRO_STATUS
+  PRO_ATTACH=$(awk '/machine_id/{print $NF}' $PRO_STATUS)
+  SRV_STATUS=$(grep -A2 -B5 "^..name:.$1" $PRO_STATUS | awk '/status:/{print $NF}')
+}
+
+annotation(){
+  echo $SRV_STATUS > /var/lib/landscape/client/annotations.d/$1
+  echo "'pro status' reports $1 is $SRV_STATUS"
+  chown landscape:landscape /var/lib/landscape/client/annotations.d/$1
+}
+
+pro_service(){
+  pro_status $1
+  if [[ $PRO_ATTACH == 'null' ]]; then
+    SRV_STATUS="unavailable"
+    annotation $1
+    echo "'pro status' reports this machine is not attached to an Ubuntu Pro subscription."
+    exit 1
+  else 
+    annotation $1
   fi
-  chown landscape: /var/lib/landscape/client/annotations.d/esm-infra
+  if [[ -s $PRO_STATUS ]]; then rm $PRO_STATUS; fi
 }
-servicestatus() {
-  echo "$1" | grep -m 1 "$2" | awk '{ print $3 }' | sed 's/\xE2\x80\x94/unavailable/'
-}
-ESMannotations
+
+pro_service esm-infra

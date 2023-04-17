@@ -21,10 +21,14 @@ pro_service(){
     annotation $1
     echo "'pro status' reports this machine is not attached to an Ubuntu Pro subscription."
     exit 1
-  else
-    annotation $1
+  elif [[ ! $SRV_STATUS =~ $2 ]]; then
+    pro $2 $1 --assume-yes
+    pro_status $1
   fi
+  annotation $1
   if [[ -s $PRO_STATUS ]]; then rm $PRO_STATUS; fi
+  if [[ ! $SRV_STATUS =~ $2 ]]; then exit 2; fi
 }
 
-pro_service livepatch
+pro_service esm-infra disable
+
