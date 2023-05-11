@@ -1,14 +1,27 @@
 #!/bin/bash
-uaannotations() {
-  local UASTATUS
-  local UANOTATTACHED
-  UASTATUS=$(ua status)
-  UANOTATTACHED=$(echo "$UASTATUS" | grep -c 'This machine is not attached to a UA subscription.')
-  if [[ $UANOTATTACHED -eq 1 ]]; then
-    echo 'unattached' > /var/lib/landscape/client/annotations.d/ua
-  else
-    echo 'attached' > /var/lib/landscape/client/annotations.d/ua
-  fi
-  chown landscape: /var/lib/landscape/client/annotations.d/ua
+
+PRO_STATUS="/var/tmp/pro-status.yaml"
+
+pro_status(){
+  pro status --format yaml > $PRO_STATUS
+  PRO_ATTACH=$(awk '/machine_id/{print $NF}' $PRO_STATUS)
 }
-uaannotations
+
+annotation(){
+  pro_status
+
+  if [[ $PRO_ATTACH == 'null' ]]; then
+    echo "unattached" > /var/lib/landscape/client/annotations.d/$1
+    echo "'pro status' reports this machine is not attached to an Ubuntu Pro subscription."
+  else
+    echo "attached" > /var/lib/landscape/client/annotations.d/$1
+    echo "'pro status' reports Ubuntu Pro is attached to:"
+    awk '/contract:/,/tech_support_level:/{print}' $PRO_STATUS
+  fi
+
+  chown landscape:landscape /var/lib/landscape/client/annotations.d/$1
+
+  if [[ -s $PRO_STATUS ]]; then rm $PRO_STATUS; fi
+}
+
+annotation ubuntu-pro
