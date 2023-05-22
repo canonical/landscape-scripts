@@ -49,6 +49,7 @@ package_reboot_if_required: true
 snap:
  commands:
    - ['install', 'lxd', '--channel', 'latest/stable']
+   - ['refresh', 'lxd', '--channel', 'latest/stable']
    - ['install', 'juju', '--channel', 'latest/stable']
 
 runcmd:
