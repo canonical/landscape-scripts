@@ -97,6 +97,7 @@ runcmd:
   - postconf -e smtp_tls_wrappermode=yes
 {% endif %}
 {% if SMTP_HOST %}
+  - postconf -e mydestination=localhost
   - postconf -e myhostname={{ FQDN }}
   - postconf -e mydomain={{ DOMAIN }}
   - postconf -e myorigin={{ DOMAIN }}
