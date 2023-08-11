@@ -1,0 +1,129 @@
+## template: jinja
+#cloud-config
+
+# SET OUR VARIABLES
+# =================
+
+# EMAIL: required
+# Your email address to share with LetsEncrypt for your SSL Certificate
+{% set EMAIL = 'rajan.patel@canonical.com' %}
+
+# TOKEN: recommended
+# Ubuntu Pro token from: https://ubuntu.com/pro/dashboard (not needed for Ubuntu Pro instances on Azure, AWS, or Google Cloud)
+{% set TOKEN = '' %}
+
+# HOSTNAME: subdomain of FQDN (e.g. `server` for `server.yourdomain.com`)
+{% set HOSTNAME = 'landscape' %}
+
+# DOMAIN (e.g. `yourdomain.com`)
+{% set DOMAIN = 'yourdomain.com' %}
+
+{% set PRETTY_HOSTNAME = "Landscape Server" %}
+
+# TIMEZONE: default value is fine
+# As represented in /usr/share/zoneinfo. An empty string ('') will result in UTC time being used.
+{% set TIMEZONE = 'America/New_York' %}
+
+# SMTP credentials
+# sendgrid example: substitute `YOUR-API-KEY-HERE` with your API KEY, https://app.sendgrid.com/settings/api_keys
+# {% set SMTP_HOST = 'smtp.sendgrid.net' %}
+# {% set SMTP_PORT = '587' %}
+# {% set SMTP_USERNAME = 'apikey' %} # 'apikey' is the correct username for Sendgrid
+# {% set SMTP_PASSWORD = '' %} # your Sendgrid API Key is used as the SMTP_PASSWORD
+
+# SMTP_USE_TLS is `yes` if TLS is needed
+# Google (SMTP_HOST=smtp.google.com SMTP_PORT=587) and Sendgrid (SMTP_HOST=smtp.sendgrid.net SMTP_PORT=465) customers should use TLS
+{% set SMTP_USE_TLS = 'yes' %}
+
+{% set SMTP_HOST = '' %}
+{% set SMTP_PORT = '' %}
+{% set SMTP_USERNAME = '' %}
+{% set SMTP_PASSWORD = '' %}
+
+# =========================
+# END OF SETTING VARIABLES
+
+# FQDN is determined programmatically from the HOSTNAME and DOMAIN values (e.g. `yourdomain.com` or `server.yourdomain.com`)
+{% set FQDN = HOSTNAME ~ ('.' if HOSTNAME else '') ~ DOMAIN %}
+{% if HOSTNAME %}
+hostname: {{ HOSTNAME }}
+{% endif %}
+{% if FQDN %}
+fqdn: {{ FQDN }}
+{% endif %}
+prefer_fqdn_over_hostname: true
+
+write_files:
+  # Postfix uses sasl_passwd for authentication
+  - path: /etc/postfix/sasl_passwd
+    permissions: "0400"
+    content: |
+      [{{ SMTP_HOST }}]:{{ SMTP_PORT }} {{ SMTP_USERNAME }}:{{ SMTP_PASSWORD }}
+
+# `apt update`
+package_update: true
+
+# `apt upgrade`
+package_upgrade: true
+
+# restart if necessary
+package_reboot_if_required: true
+
+# FAILS to add in Ubuntu Minimal 22.04 on GCP
+# apt:
+#   sources:
+#       source1:
+#           source: 'ppa:landscape/self-hosted-beta'
+
+# `apt install`
+packages:
+  - ca-certificates
+#  - landscape-server-quickstart
+
+# `snap install`
+snap:
+ commands:
+   - ['install', 'certbot', '--classic', '--channel', 'latest/stable']
+
+runcmd:
+{% if platform == 'oracle' %}
+  - iptables -F && netfilter-persistent save
+{% endif %}
+  - DEBIAN_FRONTEND=noninteractive apt-get install -y postfix ca-certificates software-properties-common
+{% if SMTP_USE_TLS|lower == 'yes' %}
+  - postconf -e smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt
+  - postconf -e smtp_use_tls=yes
+  - postconf -e smtp_tls_security_level=encrypt
+  - postconf -e smtp_tls_wrappermode=yes
+{% endif %}
+{% if SMTP_HOST %}
+  - postconf -e myhostname={{ FQDN }}
+  - postconf -e mydomain={{ DOMAIN }}
+  - postconf -e myorigin={{ DOMAIN }}
+  - postconf -e masquerade_domains={{ DOMAIN }}
+  - postconf -e default_transport=smtp
+  - postconf -e relay_transport=smtp
+  - postconf -e relayhost=[{{ SMTP_HOST }}]:{{ SMTP_PORT }}
+  - postconf -e smtp_sasl_auth_enable=yes
+  - postconf -e smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd
+  - postconf -e header_size_limit=4096000
+  - postconf -e smtp_sasl_security_options=noanonymous
+  - postmap /etc/postfix/sasl_passwd
+  - rm /etc/postfix/sasl_passwd
+  - chmod 600 /etc/postfix/sasl_passwd.db
+  - /etc/init.d/postfix restart
+{% endif %}
+  - add-apt-repository ppa:landscape/self-hosted-beta -y
+  - apt update && apt install landscape-server-quickstart -y
+  - certbot --non-interactive --apache --no-redirect --agree-tos --email {{ EMAIL }} --domains {{ FQDN }}
+
+ubuntu_advantage:
+{% if TOKEN %}
+  token: {{ TOKEN }}
+{% endif %}
+  enable:
+    - livepatch
+
+{% if "/" in TIMEZONE %}
+timezone: {{ TIMEZONE }}
+{% endif %}
