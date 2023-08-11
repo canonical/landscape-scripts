@@ -69,7 +69,7 @@ package_upgrade: true
 # restart if necessary
 package_reboot_if_required: true
 
-# FAILS to add in Ubuntu Minimal 22.04 on GCP
+# FAILS to add in Ubuntu Minimal on GCP
 # apt:
 #   sources:
 #       source1:
