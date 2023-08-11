@@ -77,7 +77,7 @@ package_reboot_if_required: true
 
 # `apt install`
 packages:
-  - ca-certificates
+  - wget
 #  - landscape-server-quickstart
 
 # `snap install`
@@ -89,9 +89,11 @@ runcmd:
 {% if platform == 'oracle' %}
   - iptables -F && netfilter-persistent save
 {% endif %}
-  - DEBIAN_FRONTEND=noninteractive apt-get install -y postfix ca-certificates software-properties-common
+  - DEBIAN_FRONTEND=noninteractive apt-get install -y postfix wget software-properties-common
+  - wget https://www.thawte.com/roots/thawte_Primary_Root_CA.pem -O /etc/postfix/thawte_Primary_Root_CA.pem
+  - chmod 400 /etc/postfix/thawte_Primary_Root_CA.pem
 {% if SMTP_USE_TLS|lower == 'yes' %}
-  - postconf -e smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt
+  - postconf -e smtp_tls_CAfile=/etc/postfix/thawte_Primary_Root_CA.pem
   - postconf -e smtp_use_tls=yes
   - postconf -e smtp_tls_security_level=encrypt
   - postconf -e smtp_tls_wrappermode=yes
