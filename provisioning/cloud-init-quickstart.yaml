@@ -113,7 +113,7 @@ runcmd:
   - chmod 600 /etc/postfix/sasl_passwd.db
   - /etc/init.d/postfix restart
 {% endif %}
-  - add-apt-repository ppa:landscape/self-hosted-beta -y
+  - add-apt-repository ppa:landscape/self-hosted-23.03 -y
   - apt update && apt install landscape-server-quickstart -y
   - certbot --non-interactive --apache --no-redirect --agree-tos --email {{ EMAIL }} --domains {{ FQDN }}
 
