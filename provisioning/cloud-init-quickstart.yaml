@@ -25,7 +25,7 @@
 {% set TIMEZONE = 'America/New_York' %}
 
 # SMTP credentials
-# sendgrid example: substitute `YOUR-API-KEY-HERE` with your API KEY, https://app.sendgrid.com/settings/api_keys
+# sendgrid example: The value for SMTP_PASSWORD should be your API KEY, https://app.sendgrid.com/settings/api_keys
 # {% set SMTP_HOST = 'smtp.sendgrid.net' %}
 # {% set SMTP_PORT = '587' %}
 # {% set SMTP_USERNAME = 'apikey' %} # 'apikey' is the correct username for Sendgrid
