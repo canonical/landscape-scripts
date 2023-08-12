@@ -54,11 +54,14 @@ fqdn: {{ FQDN }}
 prefer_fqdn_over_hostname: true
 
 write_files:
-  # Postfix uses sasl_passwd for authentication
   - path: /etc/postfix/sasl_passwd
     permissions: "0400"
     content: |
       [{{ SMTP_HOST }}]:{{ SMTP_PORT }} {{ SMTP_USERNAME }}:{{ SMTP_PASSWORD }}
+  - path: /etc/cron.d/certbot-renew
+    content: |
+      SHELL=/bin/bash
+      30 2 * * * root /snap/bin/certbot renew --non-interactive --post-hook "service apache2 reload"
 
 # `apt update`
 package_update: true
@@ -69,16 +72,17 @@ package_upgrade: true
 # restart if necessary
 package_reboot_if_required: true
 
-# FAILS to add in Ubuntu Minimal on GCP
+# `apt install`
+packages:
+  - postfix
+  - software-properties-common
+  - ca-certificates
+
+# this doesn't work on Ubuntu Minimal on GCP at the moment
 # apt:
 #   sources:
 #       source1:
-#           source: 'ppa:landscape/self-hosted-beta'
-
-# `apt install`
-packages:
-  - wget
-#  - landscape-server-quickstart
+#           source: 'ppa:landscape/self-hosted-23.03'
 
 # `snap install`
 snap:
@@ -89,31 +93,27 @@ runcmd:
 {% if platform == 'oracle' %}
   - iptables -F && netfilter-persistent save
 {% endif %}
-  - DEBIAN_FRONTEND=noninteractive apt-get install -y postfix wget software-properties-common
-  - wget https://www.thawte.com/roots/thawte_Primary_Root_CA.pem -O /etc/postfix/thawte_Primary_Root_CA.pem
-  - chmod 400 /etc/postfix/thawte_Primary_Root_CA.pem
-{% if SMTP_USE_TLS|lower == 'yes' %}
-  - postconf -e smtp_tls_CAfile=/etc/postfix/thawte_Primary_Root_CA.pem
-  - postconf -e smtp_use_tls=yes
-  - postconf -e smtp_tls_security_level=encrypt
-  - postconf -e smtp_tls_wrappermode=yes
-{% endif %}
 {% if SMTP_HOST %}
+  - postconf -e myhostname="{{ FQDN }}"
+  - postconf -e mydomain="{{ DOMAIN }}"
+  - postconf -e myorigin="{{ DOMAIN }}"
+  - postconf -e masquerade_domains="{{ DOMAIN }}"
   - postconf -e mydestination=localhost
-  - postconf -e myhostname={{ FQDN }}
-  - postconf -e mydomain={{ DOMAIN }}
-  - postconf -e myorigin={{ DOMAIN }}
-  - postconf -e masquerade_domains={{ DOMAIN }}
   - postconf -e default_transport=smtp
   - postconf -e relay_transport=smtp
-  - postconf -e relayhost=[{{ SMTP_HOST }}]:{{ SMTP_PORT }}
+  - postconf -e relayhost="[{{ SMTP_HOST }}]:{{ SMTP_PORT }}"
   - postconf -e smtp_sasl_auth_enable=yes
   - postconf -e smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd
   - postconf -e header_size_limit=4096000
   - postconf -e smtp_sasl_security_options=noanonymous
+{% if SMTP_USE_TLS|lower == 'yes' %}
+  - postconf -e smtp_tls_security_level=encrypt
+  - postconf -e smtp_tls_wrappermode=yes
+  - postconf -e smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt
+  - postconf -e smtp_use_tls=yes
   - postmap /etc/postfix/sasl_passwd
   - rm /etc/postfix/sasl_passwd
-  - chmod 600 /etc/postfix/sasl_passwd.db
+{% endif %}
   - /etc/init.d/postfix restart
 {% endif %}
   - add-apt-repository ppa:landscape/self-hosted-23.03 -y
