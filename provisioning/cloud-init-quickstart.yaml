@@ -50,8 +50,8 @@ hostname: {{ HOSTNAME }}
 {% endif %}
 {% if FQDN %}
 fqdn: {{ FQDN }}
-{% endif %}
 prefer_fqdn_over_hostname: true
+{% endif %}
 
 write_files:
   - path: /etc/postfix/sasl_passwd
