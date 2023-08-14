@@ -75,7 +75,6 @@ package_reboot_if_required: true
 packages:
   - postfix
   - software-properties-common
-  - ca-certificates
 
 # this doesn't work on Ubuntu Minimal on GCP at the moment
 # apt:
