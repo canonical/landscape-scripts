@@ -32,7 +32,6 @@
 # {% set SMTP_PASSWORD = '' %} # your Sendgrid API Key is used as the SMTP_PASSWORD
 
 # SMTP_USE_TLS is `yes` if TLS is needed
-# Google (SMTP_HOST=smtp.google.com SMTP_PORT=587) and Sendgrid (SMTP_HOST=smtp.sendgrid.net SMTP_PORT=465) customers should use TLS
 {% set SMTP_USE_TLS = 'yes' %}
 
 {% set SMTP_HOST = '' %}
@@ -107,9 +106,8 @@ runcmd:
   - postconf -e header_size_limit=4096000
   - postconf -e smtp_sasl_security_options=noanonymous
 {% if SMTP_USE_TLS|lower == 'yes' %}
+  - postconf -e smtp_sasl_tls_security_options=noanonymous
   - postconf -e smtp_tls_security_level=encrypt
-  - postconf -e smtp_tls_wrappermode=yes
-  - postconf -e smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt
   - postconf -e smtp_use_tls=yes
   - postmap /etc/postfix/sasl_passwd
   - rm /etc/postfix/sasl_passwd
