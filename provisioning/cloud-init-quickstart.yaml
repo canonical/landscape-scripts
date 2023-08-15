@@ -18,39 +18,24 @@
 # DOMAIN (e.g. `yourdomain.com`)
 {% set DOMAIN = 'yourdomain.com' %}
 
-{% set PRETTY_HOSTNAME = "Landscape Server" %}
-
-# TIMEZONE: default value is fine
-# As represented in /usr/share/zoneinfo. An empty string ('') will result in UTC time being used.
+# TIMEZONE: as represented in /usr/share/zoneinfo. An empty string ('') will result in UTC time being used.
 {% set TIMEZONE = 'America/New_York' %}
 
 # SMTP credentials
-# sendgrid example: The value for SMTP_PASSWORD should be your API KEY, https://app.sendgrid.com/settings/api_keys
-# {% set SMTP_HOST = 'smtp.sendgrid.net' %}
-# {% set SMTP_PORT = '587' %}
-# {% set SMTP_USERNAME = 'apikey' %} # 'apikey' is the correct username for Sendgrid
-# {% set SMTP_PASSWORD = '' %} # your Sendgrid API Key is used as the SMTP_PASSWORD
-
-# SMTP_USE_TLS is `yes` if TLS is needed
-{% set SMTP_USE_TLS = 'yes' %}
-
-{% set SMTP_HOST = '' %}
-{% set SMTP_PORT = '' %}
-{% set SMTP_USERNAME = '' %}
-{% set SMTP_PASSWORD = '' %}
+# SendGrid example: The value for SMTP_PASSWORD should be your API KEY, https://app.sendgrid.com/settings/api_keys
+{% set SMTP_HOST = 'smtp.sendgrid.net' %}
+{% set SMTP_PORT = '587' %}
+{% set SMTP_USERNAME = 'apikey' %} # 'apikey' is the correct username for Sendgrid
+{% set SMTP_PASSWORD = '' %} # your Sendgrid API Key is used as the SMTP_PASSWORD
 
 # =========================
 # END OF SETTING VARIABLES
 
 # FQDN is determined programmatically from the HOSTNAME and DOMAIN values (e.g. `yourdomain.com` or `server.yourdomain.com`)
 {% set FQDN = HOSTNAME ~ ('.' if HOSTNAME else '') ~ DOMAIN %}
-{% if HOSTNAME %}
 hostname: {{ HOSTNAME }}
-{% endif %}
-{% if FQDN %}
 fqdn: {{ FQDN }}
 prefer_fqdn_over_hostname: true
-{% endif %}
 
 write_files:
   - path: /etc/postfix/sasl_passwd
@@ -60,7 +45,14 @@ write_files:
   - path: /etc/cron.d/certbot-renew
     content: |
       SHELL=/bin/bash
-      30 2 * * * root /snap/bin/certbot renew --non-interactive --post-hook "service apache2 reload"
+      30 2 * * * root /snap/bin/certbot renew --non-interactive --post-hook "systemctl apache2 reload"
+
+ubuntu_advantage:
+{% if TOKEN %}
+  token: {{ TOKEN }}
+{% endif %}
+  enable:
+    - livepatch
 
 # `apt update`
 package_update: true
@@ -71,16 +63,14 @@ package_upgrade: true
 # restart if necessary
 package_reboot_if_required: true
 
+apt:
+  sources:
+      source1:
+          source: 'ppa:landscape/self-hosted-23.03'
+
 # `apt install`
 packages:
-  - postfix
-  - software-properties-common
-
-# this doesn't work on Ubuntu Minimal on GCP at the moment
-# apt:
-#   sources:
-#       source1:
-#           source: 'ppa:landscape/self-hosted-23.03'
+  - landscape-server-quickstart
 
 # `snap install`
 snap:
@@ -91,6 +81,7 @@ runcmd:
 {% if platform == 'oracle' %}
   - iptables -F && netfilter-persistent save
 {% endif %}
+  - certbot --non-interactive --apache --no-redirect --agree-tos --email {{ EMAIL }} --domains {{ FQDN }}
 {% if SMTP_HOST %}
   - postconf -e myhostname="{{ FQDN }}"
   - postconf -e mydomain="{{ DOMAIN }}"
@@ -104,25 +95,13 @@ runcmd:
   - postconf -e smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd
   - postconf -e header_size_limit=4096000
   - postconf -e smtp_sasl_security_options=noanonymous
-{% if SMTP_USE_TLS|lower == 'yes' %}
   - postconf -e smtp_sasl_tls_security_options=noanonymous
   - postconf -e smtp_tls_security_level=encrypt
   - postconf -e smtp_use_tls=yes
   - postmap /etc/postfix/sasl_passwd
   - rm /etc/postfix/sasl_passwd
-{% endif %}
   - /etc/init.d/postfix restart
 {% endif %}
-  - add-apt-repository ppa:landscape/self-hosted-23.03 -y
-  - apt update && apt install landscape-server-quickstart -y
-  - certbot --non-interactive --apache --no-redirect --agree-tos --email {{ EMAIL }} --domains {{ FQDN }}
-
-ubuntu_advantage:
-{% if TOKEN %}
-  token: {{ TOKEN }}
-{% endif %}
-  enable:
-    - livepatch
 
 {% if "/" in TIMEZONE %}
 timezone: {{ TIMEZONE }}
