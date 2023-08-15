@@ -1,0 +1,107 @@
+## template: jinja
+#cloud-config
+
+# SET OUR VARIABLES
+# =================
+
+# EMAIL: required
+# Your email address to share with LetsEncrypt for your SSL Certificate
+{% set EMAIL = 'rajan.patel@canonical.com' %}
+
+# TOKEN: recommended
+# Ubuntu Pro token from: https://ubuntu.com/pro/dashboard (not needed for Ubuntu Pro instances on Azure, AWS, or Google Cloud)
+{% set TOKEN = '' %}
+
+# HOSTNAME: subdomain of FQDN (e.g. `server` for `server.yourdomain.com`)
+{% set HOSTNAME = 'landscape' %}
+
+# DOMAIN (e.g. `yourdomain.com`)
+{% set DOMAIN = 'yourdomain.com' %}
+
+# TIMEZONE: as represented in /usr/share/zoneinfo. An empty string ('') will result in UTC time being used.
+{% set TIMEZONE = 'America/New_York' %}
+
+# SMTP credentials
+# SendGrid example: The value for SMTP_PASSWORD should be your API KEY, https://app.sendgrid.com/settings/api_keys
+{% set SMTP_HOST = 'smtp.sendgrid.net' %}
+{% set SMTP_PORT = '587' %}
+{% set SMTP_USERNAME = 'apikey' %} # 'apikey' is the correct username for Sendgrid
+{% set SMTP_PASSWORD = '' %} # your Sendgrid API Key is used as the SMTP_PASSWORD
+
+# =========================
+# END OF SETTING VARIABLES
+
+# FQDN is determined programmatically from the HOSTNAME and DOMAIN values (e.g. `yourdomain.com` or `server.yourdomain.com`)
+{% set FQDN = HOSTNAME ~ ('.' if HOSTNAME else '') ~ DOMAIN %}
+hostname: {{ HOSTNAME }}
+fqdn: {{ FQDN }}
+prefer_fqdn_over_hostname: true
+
+write_files:
+  - path: /etc/postfix/sasl_passwd
+    permissions: "0400"
+    content: |
+      [{{ SMTP_HOST }}]:{{ SMTP_PORT }} {{ SMTP_USERNAME }}:{{ SMTP_PASSWORD }}
+  - path: /etc/cron.d/certbot-renew
+    content: |
+      SHELL=/bin/bash
+      30 2 * * * root /usr/bin/certbot renew --non-interactive --post-hook "systemctl apache2 reload"
+
+ubuntu_advantage:
+{% if TOKEN %}
+  token: {{ TOKEN }}
+{% endif %}
+  enable:
+    - fips-updates
+    - livepatch
+
+# `apt update`
+package_update: true
+
+# `apt upgrade`
+package_upgrade: true
+
+# restart if necessary
+package_reboot_if_required: true
+
+apt:
+  sources:
+      source1:
+          source: 'ppa:landscape/self-hosted-23.03'
+
+# `apt install`
+packages:
+  - certbot
+  - python3-certbot-apache
+  - landscape-server-quickstart
+
+runcmd:
+{% if platform == 'oracle' %}
+  - iptables -F && netfilter-persistent save
+{% endif %}
+  - certbot --non-interactive --apache --no-redirect --agree-tos --email {{ EMAIL }} --domains {{ FQDN }}
+{% if SMTP_HOST %}
+  - postconf -e myhostname="{{ FQDN }}"
+  - postconf -e mydomain="{{ DOMAIN }}"
+  - postconf -e myorigin="{{ DOMAIN }}"
+  - postconf -e masquerade_domains="{{ DOMAIN }}"
+  - postconf -e mydestination=localhost
+  - postconf -e default_transport=smtp
+  - postconf -e relay_transport=smtp
+  - postconf -e relayhost="[{{ SMTP_HOST }}]:{{ SMTP_PORT }}"
+  - postconf -e smtp_sasl_auth_enable=yes
+  - postconf -e smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd
+  - postconf -e header_size_limit=4096000
+  - postconf -e smtp_sasl_security_options=noanonymous
+  - postconf -e smtp_tls_fingerprint_digest=sha256
+  - postconf -e smtp_sasl_tls_security_options=noanonymous
+  - postconf -e smtp_tls_security_level=encrypt
+  - postconf -e smtp_use_tls=yes
+  - postmap /etc/postfix/sasl_passwd
+  - rm /etc/postfix/sasl_passwd
+  - /etc/init.d/postfix restart
+{% endif %}
+
+{% if "/" in TIMEZONE %}
+timezone: {{ TIMEZONE }}
+{% endif %}
