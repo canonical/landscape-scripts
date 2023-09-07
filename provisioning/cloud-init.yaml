@@ -1,6 +1,9 @@
 ## template: jinja
 #cloud-config
 
+## DO NOT USE THIS FILE TO DEPLOY LANDSCAPE LXD CONTAINERS
+## USE THE cloud-init-quickstart.yaml or cloud-init-quickstart-fips.yaml files instead
+
 # SET OUR VARIABLES
 # =================
 
