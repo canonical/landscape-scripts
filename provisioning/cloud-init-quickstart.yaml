@@ -28,6 +28,10 @@
 {% set SMTP_USERNAME = 'apikey' %} # 'apikey' is the correct username for SendGrid
 {% set SMTP_PASSWORD = '' %} # Use an API Key from: https://app.sendgrid.com/settings/api_keys
 
+# Landscape version:
+# (23.03|beta)
+{% set LANDSCAPE_VERSION = '23.03' %}
+
 # =========================
 # END OF SETTING VARIABLES
 
@@ -66,7 +70,7 @@ package_reboot_if_required: true
 apt:
   sources:
       source1:
-          source: 'ppa:landscape/self-hosted-23.03'
+          source: 'ppa:landscape/self-hosted-{{ LANDSCAPE_VERSION }}'
 
 # `apt install`
 packages:
