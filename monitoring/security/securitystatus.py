@@ -1,22 +1,29 @@
 #!/usr/bin/env python3
 
-import json
-import subprocess
+# Prints the number of ESM updates that the instance can see, but not
+# install because it does not have the relevant ESM service enabled.
+# This helps administrators to identify and prioritise the enablement
+# of ESM across a fleet.
+import os
 import sys
 
-return_info = subprocess.check_output(["ua",  "security-status", "--format=json"])
-json_output = return_info.decode(sys.stdout.encoding)
-ua_security_status = json.loads(json_output)
+try:
+    from uaclient.api.u.pro.packages.updates.v1 import updates
+    from uaclient.api.u.pro.status.enabled_services.v1 import enabled_services
 
-if "esm-infra" not in ua_security_status["summary"]["ua"]["enabled_services"]:
-    unpatchable_esm_infra = ua_security_status["summary"]["num_esm_infra_updates"]
-else:    
-    unpatchable_esm_infra = 0
+    unpatchable_esm_updates = 0
 
-if "esm-apps" not in ua_security_status["summary"]["ua"]["enabled_services"]:
-    unpatchable_esm_apps = ua_security_status["summary"]["num_esm_apps_updates"]
-else:
-    unpatchable_esm_apps = 0    
+    if (not any(i.name == "esm_infra" for i in enabled_services().enabled_services)) and (updates().summary.num_esm_infra_updates > 0):
+        unpatchable_esm_updates += updates().summary.num_esm_infra_updates
 
-total_unpatchable_esm_updates = unpatchable_esm_infra + unpatchable_esm_apps
-print(total_unpatchable_esm_updates)
+    if (not any(i.name == "esm_apps" for i in enabled_services().enabled_services)) and (updates().summary.num_esm_apps_updates > 0):
+        unpatchable_esm_updates += updates().summary.num_esm_apps_updates
+
+    print(unpatchable_esm_updates)
+    sys.exit(os.EX_OK)
+
+except ImportError:
+    # Most likely a newer version of the pro client (ubuntu-advantage-tools) is required.
+    # Return 99 so that someone takes a look.
+    print("Unable to find up-to-date Pro client. Try running 'apt install ubuntu-advantage-tools' on the instance.")
+    sys.exit(os.EX_UNAVAILABLE)
