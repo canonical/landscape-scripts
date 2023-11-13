@@ -11,19 +11,23 @@ try:
     from uaclient.api.u.pro.packages.updates.v1 import updates
     from uaclient.api.u.pro.status.enabled_services.v1 import enabled_services
 
+    # Some of these calls to the pro api can take time and we have a 10 second limit on Landscape scripts
+    # so we will call the endpoints once and reuse the results
+    update_information_summary = updates().summary
+    enabled_pro_services_list = list(i.name for i in enabled_services().enabled_services)
+
     unpatchable_esm_updates = 0
 
-    if (not any(i.name == "esm_infra" for i in enabled_services().enabled_services)) and (updates().summary.num_esm_infra_updates > 0):
-        unpatchable_esm_updates += updates().summary.num_esm_infra_updates
+    if ("esm-infra" not in enabled_pro_services_list) and (update_information_summary.num_esm_infra_updates > 0):
+        unpatchable_esm_updates += update_information_summary.num_esm_infra_updates
 
-    if (not any(i.name == "esm_apps" for i in enabled_services().enabled_services)) and (updates().summary.num_esm_apps_updates > 0):
-        unpatchable_esm_updates += updates().summary.num_esm_apps_updates
+    if ("esm-apps" not in enabled_pro_services_list) and (update_information_summary.num_esm_apps_updates > 0):
+        unpatchable_esm_updates += update_information_summary.num_esm_apps_updates
 
     print(unpatchable_esm_updates)
     sys.exit(os.EX_OK)
 
 except ImportError:
     # Most likely a newer version of the pro client (ubuntu-advantage-tools) is required.
-    # Return 99 so that someone takes a look.
     print("Unable to find up-to-date Pro client. Try running 'apt install ubuntu-advantage-tools' on the instance.")
     sys.exit(os.EX_UNAVAILABLE)
