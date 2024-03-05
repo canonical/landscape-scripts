@@ -104,3 +104,23 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 
 - **Tutorial**: Deploy Landscape to an ARM powered Ubuntu instance on Oracle Public Cloud. This tutorial does not yet exist.
     - [**cloud-init.yaml**](./provisioning/cloud-init.yaml)
+
+
+## Landscape for IoT / Ubuntu Core devices
+
+### Snap Management
+
+- **Tutorial**: Install a snap using a python wearfile and dump script output to a temporary file for debugging on the device.
+    - [**install-snap-debug.sh**](./core/snaps/install-snap-debug.sh)
+
+- **Tutorial**: Install a snap using a python script and the SnapD REST API
+    - [**install-snap.py**](./core/snaps/install-snap.py)
+
+- **Tutorial**: Run an attached python script
+    - [**run-attached-script.sh**](./core/snaps/run-attached-script.sh)
+
+- **Tutorial**: Install a snap using python and the snap-http library
+    - [**snap-http-install.py**](./core/snaps/snap-http-install.py)
+
+- **Tutorial**: Remove a snap using python and the snap-http library
+    - [**snap-http-remove.py**](./core/snaps/snap-http-remove.py)
