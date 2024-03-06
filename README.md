@@ -124,3 +124,5 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 
 - **Tutorial**: Remove a snap using python and the snap-http library
     - [**snap-http-remove.py**](./core/snaps/snap-http-remove.py)
+
+_Note: some scripts may require python3-requests deb (or PyPI request) in order to function correctly. It is automatically installed in most environments (including the Landscape Client Snap) but that might not always be the case._
