@@ -30,6 +30,7 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 ## Systems Management Scripts
 
 ### Security Patching
+
 - [**Tutorial**](https://ubuntu.com/tutorials/test-and-deploy-individual-cve-fixes-with-ua-client-and-landscape): Test and deploy individual CVE fixes with UA Client and Landscape
     - [**uafix.sh**](./management/security/uafix.sh): Granular security patching by USN patch number of CVE number.
     - **uafix.py** - conversion needed
@@ -108,6 +109,8 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 
 ## Landscape for IoT / Ubuntu Core devices
 
+_Note: some scripts may require python3-requests deb (or PyPI requests) in order to function correctly. It is automatically installed in most environments (including the Landscape Client Snap) but that might not always be the case._
+
 ### Snap Management
 
 - **Tutorial**: Install a snap using a python wearfile and dump script output to a temporary file for debugging on the device.
@@ -125,4 +128,49 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 - **Tutorial**: Remove a snap using python and the snap-http library
     - [**snap-http-remove.py**](./core/snaps/snap-http-remove.py)
 
-_Note: some scripts may require python3-requests deb (or PyPI request) in order to function correctly. It is automatically installed in most environments (including the Landscape Client Snap) but that might not always be the case._
+- **Tutorial**: Update snapd configuration using Python and the snap-http library
+    - [**update-snap-config.py**](./core/snaps/update-snap-config.py)
+
+- **Tutorial**: Set the refresh timer using Python and the snap-http library
+    - [**set-refresh-timer.py**](./core/snaps/set-refresh-timer.py)
+
+### Snap Services
+
+- **Tutorial**: Enable a snap service using Python and the snap-http library
+    - [**enable-service.py**](./core/services/enable-service.py)
+
+- **Tutorial**: Restart a snap service using Python and the snap-http library
+    - [**restart-services.py**](./core/services/restart-services.py)
+
+- **Tutorial**: Stop a snap service using Python and the snap-http library
+    - [**stop-service.py**](./core/services/stop-service.py)
+
+### Snap Interfaces
+
+- **Tutorial**: Connect a snap interface using Python and the snap-http library
+    - [**connect-interface.py**](./core/interfaces/connect-interface.py)
+
+- **Tutorial**: Disconnect a snap interface using Python and the snap-http library
+    - [**disconnect-interface.py**](./core/interfaces/disconnect-interface.py)
+
+- **Tutorial**: Get interface connections using Python and the snap-http library
+    - [**get-connections.py**](./core/interfaces/get-connections.py)
+
+### Logs
+
+- **Tutorial**: Display logs for all snaps using Python and the snap-http library
+    - [**snapd-logs.py**](./core/logs/snapd-logs.py)
+
+- **Tutorial**: Push landscape-client's logs to an FTP server using Python
+    - [**ftp-client-logs.py**](./core/logs/ftp-client-logs.py)
+
+### User Management
+
+- **Tutorial**: Add an Ubuntu SSO user to a Core device using Python and the snap-http library
+    - [**add-sso-user.py**](./core/users/add-sso-user.py)
+
+- **Tutorial**: Add a system user to a Core device using Python and the snap-http library
+    - [**add-system-user.py**](./core/users/add-system-user.py)
+
+- **Tutorial**: Remove a user from a Core device
+    - [**remove-user.py**](./core/users/remove-user.py)
