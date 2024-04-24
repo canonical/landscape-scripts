@@ -134,6 +134,9 @@ _Note: some scripts may require python3-requests deb (or PyPI requests) in order
 - **Tutorial**: Set the refresh timer using Python and the snap-http library
     - [**set-refresh-timer.py**](./core/snaps/set-refresh-timer.py)
 
+- **Tutorial**: Put device into managed mode (disable automatic snap refreshes)
+    - [**snap-http-remove.py**](./core/snaps/snap-http-managed-mode.py)
+
 ### Snap Services
 
 - **Tutorial**: Enable a snap service using Python and the snap-http library
