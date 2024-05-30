@@ -29,8 +29,8 @@
 {% set SMTP_PASSWORD = '' %} # Use an API Key from: https://app.sendgrid.com/settings/api_keys
 
 # Landscape version:
-# (23.03|beta)
-{% set LANDSCAPE_VERSION = '23.03' %}
+# (24.04|23.03|beta)
+{% set LANDSCAPE_VERSION = '24.04' %}
 
 # =========================
 # END OF SETTING VARIABLES
