@@ -89,6 +89,7 @@ runcmd:
 {% endif %}
 {% if CERTBOT %}
   - certbot --non-interactive --apache --no-redirect --agree-tos --email {{ EMAIL }} --domains {{ FQDN }}
+  - sed -i '/SSLCertificateChainFile \/etc\/ssl\/certs\/landscape_server_ca.crt/s/^/#/' /etc/apache2/sites-available/{{ FQDN }}.conf
 {% endif %}
 # - SSL_CERTIFICATE_FILE
 # - SSL_CERTIFICATE_KEY_FILE
