@@ -15,12 +15,12 @@
 # HOSTNAME: subdomain of FQDN (e.g. `server` for `server.example.com`)
 {% set HOSTNAME = 'landscape' %}
 
+# DOMAIN (e.g. `example.com`)
+{% set DOMAIN = 'example.com' %}
+
 # CERTBOT: optional
 # (snap|deb)
 {% set CERTBOT = '' %} # leave blank to skip certbot installation
-
-# DOMAIN (e.g. `example.com`)
-{% set DOMAIN = 'example.com' %}
 
 # TIMEZONE: as represented in /usr/share/zoneinfo. An empty string ('') will result in UTC time being used.
 {% set TIMEZONE = 'America/New_York' %}
