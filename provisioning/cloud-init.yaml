@@ -121,6 +121,6 @@ write_files:
 
 {% if TOKEN %}
 ubuntu_pro:
-  enable: [livepatch, esm]
+  enable: [livepatch, esm-apps, esm-infra]
   token: {{ TOKEN }}
 {% endif %}
