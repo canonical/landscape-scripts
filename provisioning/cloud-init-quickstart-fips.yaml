@@ -53,7 +53,7 @@ write_files:
 
 {% if TOKEN %}
 ubuntu_pro:
-  enable: [fips, livepatch]
+  enable: [fips-updates, livepatch]
   token: {{ TOKEN }}
 {% endif %}
 
