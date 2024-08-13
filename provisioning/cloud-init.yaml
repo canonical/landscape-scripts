@@ -119,9 +119,8 @@ write_files:
         fi
       done
 
-ubuntu_advantage:
 {% if TOKEN %}
+ubuntu_pro:
+  enable: [livepatch, esm]
   token: {{ TOKEN }}
 {% endif %}
-  enable:
-  - livepatch

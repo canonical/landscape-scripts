@@ -51,12 +51,11 @@ write_files:
       SHELL=/bin/bash
       30 2 * * * root /snap/bin/certbot renew --non-interactive --post-hook "systemctl apache2 reload"
 
-ubuntu_advantage:
 {% if TOKEN %}
+ubuntu_pro:
+  enable: [livepatch, esm]
   token: {{ TOKEN }}
 {% endif %}
-  enable:
-    - livepatch
 
 # `apt update`
 package_update: true
