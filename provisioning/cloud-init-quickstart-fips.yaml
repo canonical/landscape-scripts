@@ -15,6 +15,10 @@
 # HOSTNAME: subdomain of FQDN (e.g. `server` for `server.example.com`)
 {% set HOSTNAME = 'landscape' %}
 
+# CERTBOT: optional
+# (snap|deb)
+{% set CERTBOT = '' %} # leave blank to skip certbot installation
+
 # DOMAIN (e.g. `example.com`)
 {% set DOMAIN = 'example.com' %}
 
@@ -46,10 +50,12 @@ write_files:
     permissions: "0400"
     content: |
       [{{ SMTP_HOST }}]:{{ SMTP_PORT }} {{ SMTP_USERNAME }}:{{ SMTP_PASSWORD }}
+{% if CERTBOT %}
   - path: /etc/cron.d/certbot-renew
     content: |
       SHELL=/bin/bash
       30 2 * * * root /usr/bin/certbot renew --non-interactive --post-hook "systemctl apache2 reload"
+{% endif %}
 
 {% if TOKEN %}
 ubuntu_pro:
@@ -81,7 +87,13 @@ runcmd:
 {% if platform == 'oracle' %}
   - iptables -F && netfilter-persistent save
 {% endif %}
+{% if CERTBOT %}
   - certbot --non-interactive --apache --no-redirect --agree-tos --email {{ EMAIL }} --domains {{ FQDN }}
+{% endif %}
+# - SSL_CERTIFICATE_FILE
+# - SSL_CERTIFICATE_KEY_FILE
+# - SSL_CERTIFICATE_CHAIN_FILE
+  - systemctl restart apache2.service
 {% if SMTP_HOST %}
   - postconf -e myhostname="{{ FQDN }}"
   - postconf -e mydomain="{{ DOMAIN }}"
@@ -101,7 +113,7 @@ runcmd:
   - postconf -e smtp_use_tls=yes
   - postmap /etc/postfix/sasl_passwd
   - rm /etc/postfix/sasl_passwd
-  - /etc/init.d/postfix restart
+  - systemctl restart postfix.service
 {% endif %}
 
 {% if "/" in TIMEZONE %}
