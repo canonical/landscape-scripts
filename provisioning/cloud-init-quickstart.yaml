@@ -12,11 +12,11 @@
 # Ubuntu Pro token from: https://ubuntu.com/pro/dashboard (not needed for Ubuntu Pro instances on Azure, AWS, or Google Cloud)
 {% set TOKEN = '' %}
 
-# HOSTNAME: subdomain of FQDN (e.g. `server` for `server.yourdomain.com`)
+# HOSTNAME: subdomain of FQDN (e.g. `server` for `server.example.com`)
 {% set HOSTNAME = 'landscape' %}
 
-# DOMAIN (e.g. `yourdomain.com`)
-{% set DOMAIN = 'yourdomain.com' %}
+# DOMAIN (e.g. `example.com`)
+{% set DOMAIN = 'example.com' %}
 
 # TIMEZONE: as represented in /usr/share/zoneinfo. An empty string ('') will result in UTC time being used.
 {% set TIMEZONE = 'America/New_York' %}
@@ -35,7 +35,7 @@
 # =========================
 # END OF SETTING VARIABLES
 
-# FQDN is determined programmatically from the HOSTNAME and DOMAIN values (e.g. `yourdomain.com` or `server.yourdomain.com`)
+# FQDN is determined programmatically from the HOSTNAME and DOMAIN values (e.g. `example.com` or `server.example.com`)
 {% set FQDN = HOSTNAME ~ ('.' if HOSTNAME else '') ~ DOMAIN %}
 hostname: {{ HOSTNAME }}
 fqdn: {{ FQDN }}
