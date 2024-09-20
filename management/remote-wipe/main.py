@@ -19,8 +19,8 @@ def search_for_crypt(block_device):
     return None
 
 
-def wipe(saftey_on=True, cycles=10):
-    if saftey_on:
+def wipe(safety_on=True, cycles=10):
+    if safety_on:
         print("Safety on - not firing")
         return
 
@@ -42,7 +42,7 @@ parser.add_argument(
 
 def main():
     args = parser.parse_args()
-    wipe(saftey_on=args.safety)
+    wipe(safety_on=args.safety)
 
-
-main()
+if __name__ == "__main__":
+    main()
