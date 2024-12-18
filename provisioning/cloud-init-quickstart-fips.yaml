@@ -6,7 +6,7 @@
 
 # EMAIL: required
 # Your email address to share with LetsEncrypt for your SSL Certificate
-{% set EMAIL = 'rajan.patel@canonical.com' %}
+{% set EMAIL = 'youremail@example.com' %}
 
 # TOKEN: recommended
 # Ubuntu Pro token from: https://ubuntu.com/pro/dashboard (not needed for Ubuntu Pro instances on Azure, AWS, or Google Cloud)
