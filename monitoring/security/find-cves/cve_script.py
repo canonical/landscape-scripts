@@ -37,9 +37,11 @@ def main():
     computer_ids = get_computer_ids(url, jwt_token)
     usns = get_usns(url, jwt_token, computer_ids)
     computers_with_cve = get_computers_with_cve(usns, cve_to_find)
+
     if len(computers_with_cve) != 0:
         logging.info(f"IDs of computers with {cve_to_find}: {computers_with_cve}")
         return
+
     logging.info(f"No computers with {cve_to_find}")
 
 
@@ -67,20 +69,8 @@ def get_computer_ids(url: str, jwt_token: str) -> list[int]:
     logging.info("Attempting to get all computer ids")
     url = url + "/api/v2/computers"
 
-    headers = {"Authorization": f"Bearer {jwt_token}"}
-
-    computer_ids = []
-    try:
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            computers = json.loads(json.dumps(response.json()))
-            computer_ids = [res["id"] for res in computers["results"]]
-        else:
-            logging.error(f"Received status code {response.status_code}")
-            logging.error(response.text)
-
-    except requests.exceptions.RequestException as e:
-        logging.error(f"An error occurred: {e}")
+    computers = request_get_helper(url, jwt_token)
+    computer_ids = [res["id"] for res in computers["results"]]
 
     logging.info("Retrieved all computer ids")
     return computer_ids
@@ -98,27 +88,13 @@ def get_usns(url: str, jwt_token: str, ids: list[int]) -> dict:
     logging.info("Attempting to obtain usns for all computers")
     url = url + "/api/v2/usns?computer_ids="
 
-    for i in range(len(ids)):
-        url = url + f"{ids[i]}"
-        if i < len(ids) - 1:
-            url = url + ","
+    ids_str = ",".join(map(str, ids))
+    url = url + ids_str
 
     url = url + "&show_packages=true&limit=10000"
 
-    headers = {"Authorization": f"Bearer {jwt_token}"}
-
-    usn_results = []
-    try:
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            usns = json.loads(json.dumps(response.json()))
-            usn_results = usns["results"]
-        else:
-            logging.error(f"Received status code {response.status_code}")
-            logging.error(response.text)
-
-    except requests.exceptions.RequestException as e:
-        logging.error(f"An error occurred: {e}")
+    usns = request_get_helper(url, jwt_token)
+    usn_results = usns["results"]
 
     logging.info("Retrieved all usns")
     return usn_results
@@ -137,21 +113,32 @@ def get_computers_with_cve(usns: dict, cve: str) -> set:
         cur_cves = usn["cves"]
         for cur_cve in cur_cves:
             if cur_cve["cve"] == cve:
-                parse_cur_packages(usn["packages"], computers)
+                for package in usn["packages"]:
+                    computers.update(package["computer_ids"])
     return computers
 
 
-def parse_cur_packages(packages: list, computers: set):
+def request_get_helper(url: str, jwt_token: str):
     """
-    parses the current package that has cve we are looking for to get
-    computers associated with cve
+    helper for making get requests
 
-    packages  - list of packages that have cve we are looking for
-    computers - the set containing all computers with the cve
+    url       - url to make request to
+    jwt_token - token for authorization
     """
-    for package in packages:
-        for cur_id in package["computer_ids"]:
-            computers.add(cur_id)
+    headers = {"Authorization": f"Bearer {jwt_token}"}
+    retval = {}
+    try:
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            retval = response.json()
+        else:
+            logging.error(f"Received status code {response.status_code}")
+            logging.error(response.text)
+
+    except requests.exceptions.RequestException as e:
+        logging.error(f"An error occurred: {e}")
+
+    return retval
 
 
 if __name__ == "__main__":
