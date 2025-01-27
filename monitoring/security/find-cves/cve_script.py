@@ -1,8 +1,10 @@
+#! /usr/bin/python3
 import argparse
 import json
 import logging
 import os
 import requests
+from urllib.parse import urlparse, urlunparse
 
 
 def main():
@@ -30,10 +32,10 @@ def main():
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO)
-    url = args.url
+    url = normalize_url(args.url)
     cve_to_find = args.cve
 
-    jwt_token = get_jwt_token(args.jwt_token)
+    jwt_token = args.jwt_token
     computer_ids = get_computer_ids(url, jwt_token)
     usns = get_usns(url, jwt_token, computer_ids)
     computers_with_cve = get_computers_with_cve(usns, cve_to_find)
@@ -139,6 +141,17 @@ def request_get_helper(url: str, jwt_token: str):
         logging.error(f"An error occurred: {e}")
 
     return retval
+
+
+def normalize_url(url):
+    parsed_url = urlparse(url)
+    
+    if not parsed_url.scheme:
+        logging.error("Invalid url. Scheme missing. Be sure to include \"https://\" in url")
+        exit(1)
+
+    base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+    return base_url
 
 
 if __name__ == "__main__":
