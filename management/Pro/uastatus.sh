@@ -11,10 +11,10 @@ annotation(){
   pro_status
 
   if [[ $PRO_ATTACH == 'null' ]]; then
-    echo "unattached" > /var/lib/landscape/client/annotations.d/$1
+    echo "attachedfalse" > /var/lib/landscape/client/annotations.d/$1
     echo "'pro status' reports this machine is not attached to an Ubuntu Pro subscription."
   else
-    echo "attached" > /var/lib/landscape/client/annotations.d/$1
+    echo "attachedtrue" > /var/lib/landscape/client/annotations.d/$1
     echo "'pro status' reports Ubuntu Pro is attached to:"
     awk '/contract:/,/tech_support_level:/{print}' $PRO_STATUS
   fi

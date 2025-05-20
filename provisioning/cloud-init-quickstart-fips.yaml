@@ -6,17 +6,21 @@
 
 # EMAIL: required
 # Your email address to share with LetsEncrypt for your SSL Certificate
-{% set EMAIL = 'rajan.patel@canonical.com' %}
+{% set EMAIL = 'youremail@example.com' %}
 
 # TOKEN: recommended
 # Ubuntu Pro token from: https://ubuntu.com/pro/dashboard (not needed for Ubuntu Pro instances on Azure, AWS, or Google Cloud)
 {% set TOKEN = '' %}
 
-# HOSTNAME: subdomain of FQDN (e.g. `server` for `server.yourdomain.com`)
+# HOSTNAME: subdomain of FQDN (e.g. `server` for `server.example.com`)
 {% set HOSTNAME = 'landscape' %}
 
-# DOMAIN (e.g. `yourdomain.com`)
-{% set DOMAIN = 'yourdomain.com' %}
+# DOMAIN (e.g. `example.com`)
+{% set DOMAIN = 'example.com' %}
+
+# CERTBOT: optional
+# (snap|deb)
+{% set CERTBOT = '' %} # leave blank to skip certbot installation
 
 # TIMEZONE: as represented in /usr/share/zoneinfo. An empty string ('') will result in UTC time being used.
 {% set TIMEZONE = 'America/New_York' %}
@@ -29,13 +33,13 @@
 {% set SMTP_PASSWORD = '' %} # Use an API Key from: https://app.sendgrid.com/settings/api_keys
 
 # Landscape version:
-# (23.03|beta)
-{% set LANDSCAPE_VERSION = '23.03' %}
+# (24.04|23.03|beta)
+{% set LANDSCAPE_VERSION = '24.04' %}
 
 # =========================
 # END OF SETTING VARIABLES
 
-# FQDN is determined programmatically from the HOSTNAME and DOMAIN values (e.g. `yourdomain.com` or `server.yourdomain.com`)
+# FQDN is determined programmatically from the HOSTNAME and DOMAIN values (e.g. `example.com` or `server.example.com`)
 {% set FQDN = HOSTNAME ~ ('.' if HOSTNAME else '') ~ DOMAIN %}
 hostname: {{ HOSTNAME }}
 fqdn: {{ FQDN }}
@@ -46,18 +50,18 @@ write_files:
     permissions: "0400"
     content: |
       [{{ SMTP_HOST }}]:{{ SMTP_PORT }} {{ SMTP_USERNAME }}:{{ SMTP_PASSWORD }}
+{% if CERTBOT %}
   - path: /etc/cron.d/certbot-renew
     content: |
       SHELL=/bin/bash
       30 2 * * * root /usr/bin/certbot renew --non-interactive --post-hook "systemctl apache2 reload"
+{% endif %}
 
-ubuntu_advantage:
 {% if TOKEN %}
+ubuntu_pro:
+  enable: [fips-updates, livepatch]
   token: {{ TOKEN }}
 {% endif %}
-  enable:
-    - fips-updates
-    - livepatch
 
 # `apt update`
 package_update: true
@@ -83,7 +87,14 @@ runcmd:
 {% if platform == 'oracle' %}
   - iptables -F && netfilter-persistent save
 {% endif %}
+{% if CERTBOT %}
   - certbot --non-interactive --apache --no-redirect --agree-tos --email {{ EMAIL }} --domains {{ FQDN }}
+  - sed -i '/SSLCertificateChainFile \/etc\/ssl\/certs\/landscape_server_ca.crt/s/^/#/' /etc/apache2/sites-available/{{ FQDN }}.conf
+{% endif %}
+# - SSL_CERTIFICATE_FILE
+# - SSL_CERTIFICATE_KEY_FILE
+# - SSL_CERTIFICATE_CHAIN_FILE
+  - systemctl restart apache2.service
 {% if SMTP_HOST %}
   - postconf -e myhostname="{{ FQDN }}"
   - postconf -e mydomain="{{ DOMAIN }}"
@@ -103,7 +114,7 @@ runcmd:
   - postconf -e smtp_use_tls=yes
   - postmap /etc/postfix/sasl_passwd
   - rm /etc/postfix/sasl_passwd
-  - /etc/init.d/postfix restart
+  - systemctl restart postfix.service
 {% endif %}
 
 {% if "/" in TIMEZONE %}
