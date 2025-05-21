@@ -181,4 +181,4 @@ _Note: some scripts may require python3-requests deb (or PyPI requests) in order
 ### Debugging
 
 - **Tutorial**: Collect a large amount of SnapD and core system information that could be useful when debugging a system with Canonical Support
-    - [**remove-user.py**](./debugging/snap-debug-info.sh)
+    - [**snap-debug-info.py**](./debugging/snap-debug-info.sh)
