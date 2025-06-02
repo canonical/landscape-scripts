@@ -76,7 +76,7 @@ def make_API_call(method, path):
     sock = socket.socket(family=socket.AF_UNIX)
     try:
         sock.connect(SNAPD_SOCKET)
-    except socket.error as e:
+    except OSError as e:
         if e.errno in (errno.ECONNREFUSED, errno.ENOENT, errno.ETIMEDOUT):
             raise Exception(f"Could not connect to snapd socket: {e}")
         else:
