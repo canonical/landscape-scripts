@@ -8,7 +8,7 @@
 # be able to extract logs using the journalctl command. This is because the journalctl
 # command does not support the log format used by Core 24. 
 # 
-# If you are using Core 24, you can resovle this by using a Landscape client track 
+# If you are using Core 24, you can resolve this by using a Landscape client track 
 # that is based on Core 24.
 
 
@@ -41,7 +41,7 @@ echo "================================="
 journalctl -u snapd --no-pager | grep "DENIED"
 
 echo ""
-echo "\nSNAPD PROCESS INFORMATION:"
+echo "SNAPD PROCESS INFORMATION:"
 echo "================================="
 ps -ax | grep snapd
 
@@ -51,10 +51,10 @@ ps -ax | grep snapd
 python3 << END
 import socket
 import pprint
-import subprocess
 import json
 from http.client import HTTPResponse
 from io import BytesIO
+import errno
 
 BASE_URL = "http://localhost/v2"
 SNAPD_SOCKET = "/run/snapd.socket"
@@ -74,7 +74,13 @@ def print_services(apps, indent=0):
 
 def make_API_call(method, path):
     sock = socket.socket(family=socket.AF_UNIX)
-    sock.connect(SNAPD_SOCKET)
+    try:
+        sock.connect(SNAPD_SOCKET)
+    except socket.error as e:
+        if e.errno in (errno.ECONNREFUSED, errno.ENOENT, errno.ETIMEDOUT):
+            raise Exception(f"Could not connect to snapd socket: {e}")
+        else:
+            raise
 
     url = BASE_URL + path
     response = HTTPResponse(sock, method=method, url=url)
