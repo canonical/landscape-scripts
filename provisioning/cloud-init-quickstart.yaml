@@ -33,8 +33,8 @@
 {% set SMTP_PASSWORD = '' %} # Use an API Key from: https://app.sendgrid.com/settings/api_keys
 
 # Landscape version:
-# (24.04|23.03|beta)
-{% set LANDSCAPE_VERSION = '24.04' %}
+# (25.04|24.04|23.03|self-hosted-beta|latest-stable)
+{% set LANDSCAPE_PPA_NAME = '24.04' %}
 
 # =========================
 # END OF SETTING VARIABLES
@@ -75,7 +75,7 @@ package_reboot_if_required: true
 apt:
   sources:
       source1:
-          source: 'ppa:landscape/self-hosted-{{ LANDSCAPE_VERSION }}'
+          source: 'ppa:landscape/{{ LANDSCAPE_PPA_NAME }}'
 
 # `apt install`
 packages:
