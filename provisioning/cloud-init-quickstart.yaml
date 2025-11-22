@@ -33,7 +33,7 @@
 {% set SMTP_PASSWORD = '' %} # Use an API Key from: https://app.sendgrid.com/settings/api_keys
 
 # Landscape version:
-# (25.04|24.04|23.03|self-hosted-beta|latest-stable)
+# (self-hosted-25.10|self-hosted-24.04|self-hosted-beta|latest-stable)
 {% set LANDSCAPE_PPA_NAME = '24.04' %}
 
 # =========================
