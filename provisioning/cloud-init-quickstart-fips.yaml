@@ -34,7 +34,7 @@
 
 # Landscape version:
 # (self-hosted-25.10|self-hosted-24.04|self-hosted-beta|latest-stable)
-{% set LANDSCAPE_VERSION = '24.04' %}
+{% set LANDSCAPE_VERSION = 'self-hosted-24.04' %}
 
 # =========================
 # END OF SETTING VARIABLES
