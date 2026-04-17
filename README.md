@@ -109,76 +109,89 @@ Do not hesitate to fork this repository, and submit a pull request with your imp
 
 ## Landscape for IoT / Ubuntu Core devices
 
-_Note: some scripts may require python3-requests deb (or PyPI requests) in order to function correctly. It is automatically installed in most environments (including the Landscape Client Snap) but that might not always be the case._
+Scripts in this section use the [snap-http library](https://github.com/canonical/snap-http) to interact with the snapd REST API. The library is bundled with landscape-client.
 
 ### Snap Management
 
-- **Tutorial**: Install a snap using a python wearfile and dump script output to a temporary file for debugging on the device.
+- **Tutorial**: Install a snap and dump script output to a temporary file for debugging on the device.
     - [**install-snap-debug.sh**](./core/snaps/install-snap-debug.sh)
 
-- **Tutorial**: Install a snap using a python script and the SnapD REST API
+- **Tutorial**: Install a snap
     - [**install-snap.py**](./core/snaps/install-snap.py)
 
-- **Tutorial**: Run an attached python script
-    - [**run-attached-script.sh**](./core/snaps/run-attached-script.sh)
+- **Tutorial**: Remove a snap
+    - [**remove-snap.py**](./core/snaps/remove-snap.py)
 
-- **Tutorial**: Install a snap using python and the snap-http library
-    - [**snap-http-install.py**](./core/snaps/snap-http-install.py)
+- **Tutorial**: Refresh a snap
+    - [**refresh-snap.py**](./core/snaps/refresh-snap.py)
 
-- **Tutorial**: Remove a snap using python and the snap-http library
-    - [**snap-http-remove.py**](./core/snaps/snap-http-remove.py)
+- **Tutorial**: Hold snap updates
+    - [**hold-snaps.py**](./core/snaps/hold-snaps.py)
 
-- **Tutorial**: Update snapd configuration using Python and the snap-http library
-    - [**update-snap-config.py**](./core/snaps/update-snap-config.py)
+- **Tutorial**: Unhold snap updates
+    - [**unhold-snaps.py**](./core/snaps/unhold-snaps.py)
 
-- **Tutorial**: Set the refresh timer using Python and the snap-http library
+- **Tutorial**: Set the refresh timer
     - [**set-refresh-timer.py**](./core/snaps/set-refresh-timer.py)
 
-- **Tutorial**: Put device into managed mode (disable automatic snap refreshes)
-    - [**snap-http-remove.py**](./core/snaps/snap-http-managed-mode.py)
+- **Tutorial**: Put a device into managed mode (disable automatic snap refreshes)
+    - [**managed-mode.py**](./core/snaps/managed-mode.py)
+
+### Snap Configuration
+
+- **Tutorial**: Get snap configuration
+    - [**get-conf.py**](./core/config/get-conf.py)
+
+- **Tutorial**: Set snap configuration
+    - [**set-conf.py**](./core/config/set-conf.py)
 
 ### Snap Services
 
-- **Tutorial**: Enable a snap service using Python and the snap-http library
+- **Tutorial**: Enable a snap service
     - [**enable-service.py**](./core/services/enable-service.py)
 
-- **Tutorial**: Restart a snap service using Python and the snap-http library
-    - [**restart-services.py**](./core/services/restart-services.py)
+- **Tutorial**: Restart a snap service
+    - [**restart-service.py**](./core/services/restart-service.py)
 
-- **Tutorial**: Stop a snap service using Python and the snap-http library
+- **Tutorial**: Stop a snap service
     - [**stop-service.py**](./core/services/stop-service.py)
 
 ### Snap Interfaces
 
-- **Tutorial**: Connect a snap interface using Python and the snap-http library
+- **Tutorial**: Connect a snap interface
     - [**connect-interface.py**](./core/interfaces/connect-interface.py)
 
-- **Tutorial**: Disconnect a snap interface using Python and the snap-http library
+- **Tutorial**: Disconnect a snap interface
     - [**disconnect-interface.py**](./core/interfaces/disconnect-interface.py)
 
-- **Tutorial**: Get interface connections using Python and the snap-http library
+- **Tutorial**: Get interface connections
     - [**get-connections.py**](./core/interfaces/get-connections.py)
 
 ### Logs
 
-- **Tutorial**: Display logs for all snaps using Python and the snap-http library
+- **Tutorial**: Display logs for a snap
     - [**snapd-logs.py**](./core/logs/snapd-logs.py)
 
-- **Tutorial**: Push landscape-client's logs to an FTP server using Python
+- **Tutorial**: Push landscape-client's logs to an FTP server
     - [**ftp-client-logs.py**](./core/logs/ftp-client-logs.py)
 
 ### User Management
 
-- **Tutorial**: Add an Ubuntu SSO user to a Core device using Python and the snap-http library
+- **Tutorial**: Add an Ubuntu SSO user to a Core device
     - [**add-sso-user.py**](./core/users/add-sso-user.py)
 
-- **Tutorial**: Add a system user to a Core device using Python and the snap-http library
+- **Tutorial**: Add a system user to a Core device
     - [**add-system-user.py**](./core/users/add-system-user.py)
 
 - **Tutorial**: Remove a user from a Core device
     - [**remove-user.py**](./core/users/remove-user.py)
 
+### Attachments
+
+- **Tutorial**: Run an attached script
+    - [**run-attached-script.sh**](./core/attachments/run-attached-script.sh)
+
 ### Debugging
 
 - **Tutorial**: Collect a large amount of SnapD and core system information that could be useful when debugging a system with Canonical Support
-    - [**snap-debug-info.py**](./debugging/snap-debug-info.sh)
+    - [**snap-debug-info.sh**](./debugging/snap-debug-info.sh)
