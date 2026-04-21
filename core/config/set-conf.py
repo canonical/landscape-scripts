@@ -4,18 +4,19 @@ from landscape.client import snap_http
 
 # Set configuration.
 snap_http.set_conf(
-    "system",  # snap name
+    "landscape-client",
     {
-        "experimental.confdb": True,
-        "experimental.confdb-control": True,
-        "experimental.remote-device-management": True,
+        "account-name": "standalone",
+        "computer-title": "my-device",
+        "url": "https://landscape.example.com/message-system",
+        "ping-url": "http://landscape.example.com/ping",
     },
 )
 
 # Unset a configuration option by passing None.
 snap_http.set_conf(
-    "system",
+    "landscape-client",
     {
-        "experimental.remote-device-management": None,
+        "some-url": None,
     },
 )

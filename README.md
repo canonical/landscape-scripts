@@ -186,6 +186,29 @@ Scripts in this section use the [snap-http library](https://github.com/canonical
 - **Tutorial**: Remove a user from a Core device
     - [**remove-user.py**](./core/users/remove-user.py)
 
+### Confdb
+
+- **Tutorial**: Enable the experimental confdb and confdb-control features
+    - [**enable-confdb.py**](./core/confdb/enable-confdb.py)
+
+- **Tutorial**: Acknowledge a confdb-schema assertion into snapd
+    - [**acknowledge-confdb-schema.py**](./core/confdb/acknowledge-confdb-schema.py)
+
+- **Tutorial**: Set values in a confdb view
+    - [**set-confdb.py**](./core/confdb/set-confdb.py)
+
+- **Tutorial**: Get values from a confdb view
+    - [**get-confdb.py**](./core/confdb/get-confdb.py)
+
+- **Tutorial**: Grant an operator delegated access to confdb views
+    - [**delegate-confdb.py**](./core/confdb/delegate-confdb.py)
+
+- **Tutorial**: Revoke an operator's delegated confdb access
+    - [**undelegate-confdb.py**](./core/confdb/undelegate-confdb.py)
+
+- **Tutorial**: Retrieve the confdb-control assertion
+    - [**get-confdb-control-assertion.py**](./core/confdb/get-confdb-control-assertion.py)
+
 ### Attachments
 
 - **Tutorial**: Run an attached script
