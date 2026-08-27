@@ -60,6 +60,25 @@ write_files:
       SHELL=/bin/bash
       30 2 * * * root /snap/bin/certbot renew --non-interactive --post-hook "systemctl apache2 reload"
 {% endif %}
+  - path: /tmp/setup-debarchive.sql
+    content: |
+      CREATE USER landscape_debarchive WITH PASSWORD '{{ DEBARCHIVE_DB_PASSWORD }}';
+      CREATE DATABASE "landscape-standalone-debarchive" OWNER landscape_debarchive;
+      GRANT USAGE, CREATE ON SCHEMA public TO landscape_debarchive;
+  - path: /tmp/setup-debarchive.sh
+    permissions: "0755"
+    content: |
+      #!/bin/bash
+      set -e
+
+      # Wait for PostgreSQL to be ready and create Deb Archive user & database
+      sudo -u postgres psql -f /tmp/setup-debarchive.sql || true
+
+      # Inject Apache Rewrite Rules for Deb Archive if not present
+      APACHE_CONF="/etc/apache2/sites-available/landscape.conf"
+      if [ -f "$APACHE_CONF" ] && ! grep -q "/debarchive" "$APACHE_CONF"; then
+          sed -i '/RewriteRule \^\/\(\.\*\) http:\/\/localhost:8080/i \    # Landscape Deb Archive\n    RewriteRule ^/debarchive$ /debarchive/ [R=permanent]\n    RewriteRule ^/debarchive/(.*) http://localhost:8100/$1 [P,L]\n' "$APACHE_CONF"
+      fi
 
 {% if TOKEN %}
 ubuntu_pro:
@@ -90,9 +109,12 @@ packages:
 
 # `snap install`
 snap:
- commands:
+  commands:
+    - ['install', 'landscape-outbox']
+    - ['install', 'landscape-debarchive']
+    - ['set', 'landscape-debarchive', 'deb.archive.database.name=landscape-standalone-debarchive', 'deb.archive.database.user=landscape_debarchive', 'deb.archive.database.password={{ DEBARCHIVE_DB_PASSWORD }}']
 {% if CERTBOT == 'snap' %}
-   - ['install', 'certbot', '--classic', '--channel', 'latest/stable']
+    - ['install', 'certbot', '--classic', '--channel', 'latest/stable']
 {% endif %}
 
 runcmd:
