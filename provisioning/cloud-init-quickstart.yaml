@@ -4,46 +4,50 @@
 # SET OUR VARIABLES
 # =================
 
-# EMAIL: required
-# Your email address to share with LetsEncrypt for your SSL Certificate
+{# EMAIL: required #}
+{# Your email address to share with LetsEncrypt for your SSL Certificate #}
 {% set EMAIL = 'youremail@example.com' %}
 
-# TOKEN: recommended
-# Ubuntu Pro token from: https://ubuntu.com/pro/dashboard (not needed for Ubuntu Pro instances on Azure, AWS, or Google Cloud)
+{# TOKEN: recommended #}
+{# Ubuntu Pro token from: https://ubuntu.com/pro/dashboard (not needed for Ubuntu Pro instances on Azure, AWS, or Google Cloud) #}
 {% set TOKEN = '' %}
 
-# HOSTNAME: subdomain of FQDN (e.g. `server` for `server.example.com`)
+{# HOSTNAME: subdomain of FQDN (e.g. `server` for `server.example.com`) #}
 {% set HOSTNAME = 'landscape' %}
 
-# DOMAIN (e.g. `example.com`)
+{# DOMAIN (e.g. `example.com`) #}
 {% set DOMAIN = 'example.com' %}
 
-# CERTBOT: optional
-# (snap|deb)
-{% set CERTBOT = '' %} # leave blank to skip certbot installation
+{# CERTBOT: optional #}
+{# (snap|deb) #}
+{% set CERTBOT = '' %} {# leave blank to skip certbot installation #}
 
-# TIMEZONE: as represented in /usr/share/zoneinfo. An empty string ('') will result in UTC time being used.
+{# TIMEZONE: as represented in /usr/share/zoneinfo. An empty string ('') will result in UTC time being used. #}
 {% set TIMEZONE = 'America/New_York' %}
 
-# SMTP credentials
-# SendGrid example:
+{# SMTP credentials #}
+{# SendGrid example: #}
 {% set SMTP_HOST = 'smtp.sendgrid.net' %}
 {% set SMTP_PORT = '587' %}
-{% set SMTP_USERNAME = 'apikey' %} # 'apikey' is the correct username for SendGrid
-{% set SMTP_PASSWORD = '' %} # Use an API Key from: https://app.sendgrid.com/settings/api_keys
+{% set SMTP_USERNAME = 'apikey' %} {# 'apikey' is the correct username for SendGrid #}
+{% set SMTP_PASSWORD = '' %} {# Use an API Key from: https://app.sendgrid.com/settings/api_keys #}
 
-# Landscape version:
-# (self-hosted-25.10|self-hosted-24.04|self-hosted-beta|latest-stable)
+{# Landscape version: #}
+{# (self-hosted-26.04|self-hosted-25.10|self-hosted-24.04|self-hosted-beta|latest-stable) #}
 {% set LANDSCAPE_PPA_NAME = 'self-hosted-26.04' %}
+
+{# DEBARCHIVE_DB_PASSWORD: the password for the debarchive database #}
+{% set DEBARCHIVE_DB_PASSWORD = 'ChangeMe_Landscape2604_DbPass!' %}
 
 # =========================
 # END OF SETTING VARIABLES
 
-# FQDN is determined programmatically from the HOSTNAME and DOMAIN values (e.g. `example.com` or `server.example.com`)
+{# FQDN is determined programmatically from the HOSTNAME and DOMAIN values (e.g. `example.com` or `server.example.com`) #}
 {% set FQDN = HOSTNAME ~ ('.' if HOSTNAME else '') ~ DOMAIN %}
 hostname: {{ HOSTNAME }}
 fqdn: {{ FQDN }}
 prefer_fqdn_over_hostname: true
+manage_etc_hosts: localhost
 
 write_files:
   - path: /etc/postfix/sasl_passwd
