@@ -118,7 +118,7 @@ snap:
 {% endif %}
 
 runcmd:
-{% if platform == 'oracle' %}
+{% if platform | default('') == 'oracle' %}
   - iptables -F && netfilter-persistent save
 {% endif %}
   - /tmp/setup-debarchive.sh
