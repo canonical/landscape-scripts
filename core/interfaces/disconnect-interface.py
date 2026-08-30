@@ -2,11 +2,9 @@
 
 from landscape.client import snap_http
 
-snap_http.http.post(
-    "/interfaces",
-    {
-        "action": "disconnect",
-        "slots": [{"slot": "account-control"}],
-        "plugs": [{"snap": "landscape-client", "plug": "account-control"}],
-    },
+snap_http.disconnect_interface(
+    in_snap="system",
+    in_slot="account-control",
+    out_snap="landscape-client",
+    out_plug="account-control",
 )

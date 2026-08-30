@@ -2,13 +2,13 @@
 
 # This script collects information about the status of a device to aid in debugging.
 # There is a slight limitation when trying to extract logs using the journalctl
-# command. 
+# command.
 #
 # If your Landscape snap is based on Core 22 and your device is Core 24, you will not
 # be able to extract logs using the journalctl command. This is because the journalctl
-# command does not support the log format used by Core 24. 
-# 
-# If you are using Core 24, you can resolve this by using a Landscape client track 
+# command does not support the log format used by Core 24.
+#
+# If you are using Core 24, you can resolve this by using a Landscape client track
 # that is based on Core 24.
 
 
@@ -72,7 +72,7 @@ def print_services(apps, indent=0):
         print(line)
 
 
-def make_API_call(method, path):
+def make_api_call(method, path):
     sock = socket.socket(family=socket.AF_UNIX)
     try:
         sock.connect(SNAPD_SOCKET)
@@ -109,20 +109,20 @@ def make_API_call(method, path):
 
 print("\nSystem Information:")
 print("=================================")
-pprint.pprint(make_API_call("GET", "/system-info"))
+pprint.pprint(make_api_call("GET", "/system-info"))
 
 # Get SnapD Info
 print("\nModel and Serial Information:")
 print("=================================")
-pprint.pprint(make_API_call("GET", "/model/serial"))
+pprint.pprint(make_api_call("GET", "/model/serial"))
 
 print("\nInstalled Snap Information:")
 print("=================================")
-pprint.pprint(make_API_call("GET", "/apps"))
+pprint.pprint(make_api_call("GET", "/apps"))
 
 print("\nSnap Services Information:")
 print("=================================")
-response_json = make_API_call("GET", "/apps")
+response_json = make_api_call("GET", "/apps")
 
 # Extract the JSON part from the HTTP response
 
@@ -141,14 +141,14 @@ print_services(filtered)
 
 print("\nInterface Connection Information:")
 print("=================================")
-pprint.pprint(make_API_call("GET", "/connections"))
+pprint.pprint(make_api_call("GET", "/connections"))
 
 print("\nSnapD Changes Information:")
 print("=================================")
-pprint.pprint(make_API_call("GET",  "/changes?select=all"))
+pprint.pprint(make_api_call("GET", "/changes?select=all"))
 
 print("\nValidation Sets Information:")
 print("=================================")
-pprint.pprint(make_API_call("GET", "/validation-sets"))
+pprint.pprint(make_api_call("GET", "/validation-sets"))
 
 END

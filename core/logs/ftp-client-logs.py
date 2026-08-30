@@ -4,11 +4,11 @@ from ftplib import FTP
 
 SNAP_DATA = os.getenv("SNAP_DATA")
 
-# connect and login to the FTP server
+# Connect and login to the FTP server.
 ftp = FTP("192.168.0.103")
 ftp.login("username", "password")
 
-# push all the landscape-client logs to the FTP server
+# Push all the landscape-client logs to the FTP server.
 log_files = [
     "broker.log",
     "manager.log",
